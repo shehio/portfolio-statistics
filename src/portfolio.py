@@ -3,7 +3,7 @@ import numpy as np
 
 class Portfolio:
 
-    def __init__(self, securities, cash):
+    def __init__(self, securities, cash, constraints):
         self.__validate__securities(securities)
         self.securities = securities
         self.cash = cash
