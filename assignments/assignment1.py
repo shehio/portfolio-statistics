@@ -14,7 +14,6 @@ import numpy as np
 
 def establish_portfolio(initial_balance, inception_date, tickers, transaction_cost, date):
     equal_percentage = 1.0 / len(tickers)
-    current_balance = initial_balance
     transactions_history = TransactionsHistory()
     securities = np.array([])
 
@@ -25,12 +24,10 @@ def establish_portfolio(initial_balance, inception_date, tickers, transaction_co
         security = Security(ticker, shares, 'NASDAQ', Currency.Dollars)
         securities = np.append(securities, security)
 
-        transaction = Transaction(ticker, shares, security_price, Currency.Dollars)
+        transaction = Transaction(inception_date, security, shares, security_price, Currency.Dollars)
         transactions_history.push_transaction(transaction)
 
-        balance_spent = shares * security_price
-        current_balance = current_balance - balance_spent - shares * transaction_cost
-
+    current_balance = sum(map(lambda _transaction: transaction.price, transactions_history.transactions))
     current_balance = Security('CASH', current_balance, 'None', Currency.Dollars)
     return Portfolio(current_balance, inception_date, securities, transactions_history)
 
@@ -58,23 +55,38 @@ portfolio = establish_portfolio(that_initial_balance, start_date, current_ticker
 print(f'The total worth of the portfolio after making the initial transactions: {portfolio.get_value(end_date)}')
 
 # Q2: Calculate the return of the transition period (prior to inception) based on the beginning value of $1 million.
-initial_portfolio_value = portfolio.get_value(end_date)
+initial_portfolio_value = portfolio.get_value(start_date)
 first_price_return = (initial_portfolio_value - that_initial_balance) / initial_portfolio_value * 100
 first_total_return = first_price_return
 
 print(f'Total Return = Price Return = {first_total_return}, since dividends are all zero.')
 
-# Q3: Check your stocks for any splits
-for stock in portfolio.securities:
-    print(f'split for ticker: {stock.ticker} from {start_date} to {end_date} is: '
-          f'{ApiHelpers.get_range_splits(stock.ticker, start_date, end_date)}')
+# # Q3: Check your stocks for any splits
+# for stock in portfolio.securities:
+#     print(f'split for ticker: {stock.ticker} from {start_date} to {end_date} is: '
+#           f'{ApiHelpers.get_range_splits(stock.ticker, start_date, end_date)}')
 
-# Q4: Check if your stocks distributed any dividends
-for stock in portfolio.securities:
-    print(f'split for ticker: {stock.ticker} on {start_date} to {end_date} is: '
-          f'{ApiHelpers.get_range_dividends(stock.ticker, start_date, end_date)}')
+# # Q4: Check if your stocks distributed any dividends
+# for stock in portfolio.securities:
+#     print(f'split for ticker: {stock.ticker} on {start_date} to {end_date} is: '
+#           f'{ApiHelpers.get_range_dividends(stock.ticker, start_date, end_date)}')
 
 # Q5: Calculate the management fee collected on April 3rd and deduct it from the liquidity reserve.
 weekly_fee = PortfolioHelpers.get_fee(portfolio,  annual_fee, FeeFrequency.weekly, weekly_fee_date)
 portfolio.discount_fee(weekly_fee)
 print(f'The weekly fee on date: {weekly_fee_date} is: {weekly_fee}, the cash value afterwards: {portfolio.cash}')
+
+# Q6: Make a trade.
+security = Security('AAPL', -1, 'NASDAQ', Currency.Dollars)
+transaction = Transaction(trade_date, security, -1, broker_transaction_cost, Currency.Dollars)
+new_portfolio = PortfolioHelpers.make_trade(portfolio, security, transaction)
+
+security = Security('ALK', 10, 'NASDAQ', Currency.Dollars)
+transaction = Transaction(trade_date, security, 10, broker_transaction_cost, Currency.Dollars)
+new_portfolio = PortfolioHelpers.make_trade(new_portfolio, security, transaction)
+
+# Q7:
+current_portfolio_value = new_portfolio.get_value(end_date)
+second_price_return = (current_portfolio_value - initial_portfolio_value) / current_portfolio_value * 100
+second_total_return = second_price_return
+print(f'Total Return = Price Return = {second_total_return}, since dividends are all zero.')

@@ -33,6 +33,18 @@ class Portfolio:
     def get_allocations(self):
         pass
 
+    def contains(self, security):
+        for _security in self.securities:
+            if _security.ticker == security.ticker:
+                return True
+        return False
+
+    def get_security(self, security):
+        for _security in self.securities:
+            if _security.ticker == security.ticker:
+                return _security
+        return None
+
     def get_pre_tax_liquidation(self, liquidation_date):
         return self.get_value(liquidation_date)
 
