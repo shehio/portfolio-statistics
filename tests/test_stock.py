@@ -1,4 +1,4 @@
-from src.stock import Stock
+from src.security import Stock
 
 
 def test_init_stock():

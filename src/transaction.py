@@ -1,6 +1,7 @@
 class Transaction:  # Or trade?
 
-    def __init__(self, stock, shares, long=True):  # What about Bonds?
+    def __init__(self, stock, shares, price, long=True):  # What about Bonds?
         self.stock = stock
         self.shares = shares
+        self.price = price
         self.long = long

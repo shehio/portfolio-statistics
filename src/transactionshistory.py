@@ -4,7 +4,7 @@ import numpy as np
 class TransactionsHistory:
 
     def __init__(self):
-        self.transactions = np.Array()
+        self.transactions = np.array([])
 
-    def push_transaction(self, transaction):  # What about Bonds?
-        self.transactions.push(transaction)
+    def push_transaction(self, transaction):
+        np.append(self.transactions, transaction)
