@@ -32,6 +32,16 @@ class ApiHelpers:
         return ApiHelpers.__extract_number_from_series(security.dividends, date)
 
     @staticmethod
+    def get_range_splits(ticker: str, start_date: datetime, end_date: datetime) -> float:
+        security = yf.Ticker(ticker)
+        return ApiHelpers.__extract_number_from_series_with_conditional_range(security.splits, start_date, end_date)
+
+    @staticmethod
+    def get_range_dividends(ticker: str, start_date: datetime, end_date: datetime) -> float:
+        security = yf.Ticker(ticker)
+        return ApiHelpers.__extract_number_from_series_with_conditional_range(security.dividends, start_date, end_date)
+
+    @staticmethod
     def __get_price_common(ticker: str, date: datetime, field: str) -> float:
         return yf.download(ticker, start=date, period="1d", progress=False)[field][0]
 
@@ -43,3 +53,10 @@ class ApiHelpers:
         if series_value.size == 0:
             return 0
         return float(series_value)
+
+    @staticmethod
+    def __extract_number_from_series_with_conditional_range(series, start_date, end_date):
+        data_frame = pd.DataFrame({'date': series.index, 'value': series.values})
+        mask = (data_frame['date'] >= start_date.__str__()) & (data_frame['date'] <= end_date.__str__())
+        data_frame = data_frame.loc[mask]['value']
+        return float(sum(data_frame))

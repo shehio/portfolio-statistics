@@ -1,43 +1,55 @@
 from .apihelpers import ApiHelpers
+from .security import Security
 
+import datetime
 import numpy as np
 
 
+# Portfolio is immutable, you add your securities and that's that.
+# If you want to add a new security, be it a stock, a bond, a foreign currency, an option, or a future, please
+# refer to portfolio helpers.
 class Portfolio:
 
-    def __init__(self, cash, securities=np.array([]), transactions_history=None, constraints=None):
+    def __init__(self, cash: Security, inception_date: datetime, securities=np.array([]), transactions_history=None, constraints=None):
         self.cash = cash
         Portfolio.__validate_securities(securities)
+        self.inception_date = inception_date
         self.securities = securities
         self.transactions_history = transactions_history
         self.constraints = constraints
-
-    def add_security(self, security):
-        if np.isin(security, self.securities):
-            self.securities.insert(self.securities.get(security) + security.shares)  # Correct this.
-        else:
-            np.append(self.securities, security)
+        self.dividends = 0
 
     def update_cash(self, cash):
         self.cash = cash
+
+    def discount_fee(self, fee):
+        updated_cash = self.cash.shares - fee
+        self.cash.shares = updated_cash
 
     def get_value(self, date):
         return self.cash.shares + sum(map(
             lambda security: ApiHelpers.get_close_price(security.ticker, date) * security.shares, self.securities))
 
-    def weekly_fee(self, fee_percentage):
-        pass
-
     def get_allocations(self):
         pass
 
-    def get_pre_tax_liquidation(self, date):
-        pass
+    def get_pre_tax_liquidation(self, liquidation_date):
+        return self.get_value(liquidation_date)
 
-    def get_post_tax_liquidation(self, date, capital_gain_tax_rate):
-        pass
+    def get_post_tax_liquidation(self, liquidation_date, capital_gain_tax_rate, dividends_tax_rate):
+        total_tax = 0
+        total_tax +=\
+            max(self.get_value(liquidation_date) - self.get_value(self.inception_date), 0) * capital_gain_tax_rate
+        total_tax += self.get_all_dividends(liquidation_date) * dividends_tax_rate
 
-    def write_holding(self):
+    def get_all_dividends(self, liquidation_date):
+        current_dividends = sum(map(
+            lambda security: ApiHelpers.get_range_dividends(security.ticker, self.inception_date, liquidation_date),
+            self.securities))
+        self.dividends += current_dividends
+        self.cash.shares += current_dividends
+
+    def write_holding(self, date):
         pass
 
     @staticmethod

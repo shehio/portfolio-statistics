@@ -1,5 +1,8 @@
 from src.apihelpers import ApiHelpers
+from src.currency import Currency
 from src.portfolio import Portfolio
+from src.portfoliohelpers import PortfolioHelpers
+from src.portfoliohelpers import FeeFrequency
 from src.security import Security
 from src.transaction import Transaction
 from src.transactionshistory import TransactionsHistory
@@ -9,7 +12,7 @@ import datetime
 import numpy as np
 
 
-def establish_portfolio(initial_balance, tickers, transaction_cost, date):
+def establish_portfolio(initial_balance, inception_date, tickers, transaction_cost, date):
     equal_percentage = 1.0 / len(tickers)
     current_balance = initial_balance
     transactions_history = TransactionsHistory()
@@ -19,17 +22,17 @@ def establish_portfolio(initial_balance, tickers, transaction_cost, date):
         security_price = ApiHelpers.get_close_price(ticker, date)
         shares = np.floor(initial_balance * equal_percentage / security_price)
 
-        security = Security(ticker, shares, 'NASDAQ')
+        security = Security(ticker, shares, 'NASDAQ', Currency.Dollars)
         securities = np.append(securities, security)
 
-        transaction = Transaction(ticker, shares, security_price)
+        transaction = Transaction(ticker, shares, security_price, Currency.Dollars)
         transactions_history.push_transaction(transaction)
 
         balance_spent = shares * security_price
         current_balance = current_balance - balance_spent - shares * transaction_cost
 
-    current_balance = Security('CASH', current_balance, 'None')
-    return Portfolio(current_balance, securities, transactions_history)
+    current_balance = Security('CASH', current_balance, 'None', Currency.Dollars)
+    return Portfolio(current_balance, inception_date, securities, transactions_history)
 
 
 security_count = 20
@@ -37,6 +40,7 @@ maximum_security_weight = 0.2
 maximum_cash_weight = 0.05
 broker_transaction_cost = 0.001
 fee_per_week = 0.01 * 0.01 * 2
+annual_fee = 1.04 / 100
 start_date = datetime.date(2020, 3, 27)
 end_date = datetime.date(2020, 4, 3)
 trade_date = datetime.date(2020, 4, 3)
@@ -47,7 +51,7 @@ current_tickers = ["AAPL","ALK", "AMZN", "ADBE", "GOOGL", "CSCO", "CIT",  "DAL",
             "IBM", "LYFT", "EXPE", "MS",  "MSFT", "NKE", "T", "TWTR", "UBER", "VMW"]
 
 # Q0
-portfolio = establish_portfolio(that_initial_balance, current_tickers, broker_transaction_cost, start_date)
+portfolio = establish_portfolio(that_initial_balance, start_date, current_tickers, broker_transaction_cost, start_date)
 # print(portfolio.__repr__())
 
 # Q1: Calculate the total value of the portfolio after the trades.
@@ -62,8 +66,15 @@ print(f'Total Return = Price Return = {first_total_return}, since dividends are 
 
 # Q3: Check your stocks for any splits
 for stock in portfolio.securities:
-    print(f'split for ticker: {stock.ticker} on {start_date} is: {ApiHelpers.get_splits(stock.ticker, start_date)}')
+    print(f'split for ticker: {stock.ticker} from {start_date} to {end_date} is: '
+          f'{ApiHelpers.get_range_splits(stock.ticker, start_date, end_date)}')
 
 # Q4: Check if your stocks distributed any dividends
 for stock in portfolio.securities:
-    print(f'split for ticker: {stock.ticker} on {start_date} is: {ApiHelpers.get_splits(stock.ticker, start_date)}')
+    print(f'split for ticker: {stock.ticker} on {start_date} to {end_date} is: '
+          f'{ApiHelpers.get_range_dividends(stock.ticker, start_date, end_date)}')
+
+# Q5: Calculate the management fee collected on April 3rd and deduct it from the liquidity reserve.
+weekly_fee = PortfolioHelpers.get_fee(portfolio,  annual_fee, FeeFrequency.weekly, weekly_fee_date)
+portfolio.discount_fee(weekly_fee)
+print(f'The weekly fee on date: {weekly_fee_date} is: {weekly_fee}, the cash value afterwards: {portfolio.cash}')
