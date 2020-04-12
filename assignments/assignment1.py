@@ -47,6 +47,8 @@ that_initial_balance = 1000 * 1000
 current_tickers = ["AAPL","ALK", "AMZN", "ADBE", "GOOGL", "CSCO", "CIT",  "DAL", "EA", "GS",
             "IBM", "LYFT", "EXPE", "MS",  "MSFT", "NKE", "T", "TWTR", "UBER", "VMW"]
 
+weekly_fees = np.array([0])
+
 # Q0
 portfolio = establish_portfolio(that_initial_balance, start_date, current_tickers, broker_transaction_cost)
 print(portfolio.__repr__())
@@ -68,6 +70,8 @@ new_portfolio = PortfolioHelpers.check_for_dividends(new_portfolio, start_date, 
 
 # Q5: Calculate the management fee collected on April 3rd and deduct it from the liquidity reserve.
 weekly_fee = PortfolioHelpers.get_fee(new_portfolio,  annual_fee, FeeFrequency.weekly, weekly_fee_date)
+weekly_fees = np.append(weekly_fees, weekly_fee)
+
 print()
 print(f'The cash before discounting the fee is: {new_portfolio.cash}')
 new_portfolio.discount_fee(weekly_fee)
@@ -99,6 +103,8 @@ new_portfolio = PortfolioHelpers.check_for_splits(new_portfolio, assignment1_end
 new_portfolio = PortfolioHelpers.check_for_dividends(new_portfolio, assignment1_end_date, assignment2_end_date)
 
 weekly_fee = PortfolioHelpers.get_fee(new_portfolio,  annual_fee, FeeFrequency.weekly, assignment2_end_date)
+weekly_fees = np.append(weekly_fees, weekly_fee)
+
 print()
 print(f'The cash before discounting the fee is: {new_portfolio.cash}')
 new_portfolio.discount_fee(weekly_fee)
@@ -110,3 +116,27 @@ second_price_return = (assignment2_portfolio_value - assignment1_portfolio_value
 second_total_return = second_price_return
 print(f'Total Return = Price Return = {second_total_return}, since dividends are all zero.')
 print(f'The portfolios worth at the end of week 3: {new_portfolio.get_value(assignment2_end_date)}')
+
+# Q2:
+# The returns calculated for the portfolio so far are net-of-fees returns. Calculate the following
+# additional items, as of 10 April 2020:
+# a. Calculate the linked net-of-fees return for the period from inception to 10 April 2020.
+# Reminder: the inception of the portfolio measurement period is the market close on 27
+# March 2020.
+assignment2_portfolio_value = new_portfolio.get_value(assignment2_end_date)
+net_of_fees_returns = (assignment2_portfolio_value + sum(map(lambda fee: fee, weekly_fees)) - initial_portfolio_value) / assignment2_portfolio_value * 100
+print()
+print(f'Net of fees returns = {net_of_fees_returns}')
+print()
+
+# b. Calculate an approximate gross-of-fees return from inception to this date. Describe any assumptions used.
+gross_of_fees_returns = (assignment2_portfolio_value - initial_portfolio_value) / assignment2_portfolio_value * 100
+print()
+print(f'Gross of fees returns = {gross_of_fees_returns}')
+print()
+
+# c. Assuming the portfolio is liquidated on 10 April 2020, calculate the post-tax post redemption
+# return from inception to this date.Assume an income tax rate of 15% for both
+# dividends and realized capital gains.
+# Use this method: get_post_tax_liquidation_value.
+

@@ -10,7 +10,13 @@ import numpy as np
 # refer to portfolio helpers.
 class Portfolio:
 
-    def __init__(self, cash: Security, inception_date: datetime, securities=np.array([]), transactions_history=None, constraints=None):
+    def __init__(
+            self,
+            cash: Security,
+            inception_date: datetime,
+            securities=np.array([]),
+            transactions_history=None,
+            constraints=None):
         self.cash = cash
         Portfolio.__validate_securities(securities)
         self.inception_date = inception_date
@@ -45,10 +51,11 @@ class Portfolio:
                 return _security
         return None
 
-    def get_pre_tax_liquidation(self, liquidation_date):
+    def get_pre_tax_liquidation_value(self, liquidation_date):
         return self.get_value(liquidation_date)
 
-    def get_post_tax_liquidation(self, liquidation_date, capital_gain_tax_rate, dividends_tax_rate):
+    # Assuming no shorting is allowed.
+    def get_post_tax_liquidation_value(self, liquidation_date, capital_gain_tax_rate, dividends_tax_rate):
         total_tax = 0
         total_tax +=\
             max(self.get_value(liquidation_date) - self.get_value(self.inception_date), 0) * capital_gain_tax_rate
@@ -64,9 +71,9 @@ class Portfolio:
     def write_holding(self, date):
         pass
 
+    def __repr__(self):
+        return f'{self.cash}, {self.securities}'
+
     @staticmethod
     def __validate_securities(securities):
         pass
-
-    def __repr__(self):
-        return f'{self.cash}, {self.securities}'
