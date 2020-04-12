@@ -1,6 +1,13 @@
+import operator
+
 from src.inflationhelpers import InflationHelpers
+from functools import reduce
 
 import numpy as np
+
+
+def prod(iterable):
+    return reduce(operator.mul, iterable, 1)
 
 
 def normalize_returns(nominal_returns, inflation_rate):
@@ -35,3 +42,29 @@ for (nominal_return, inflation_rate) in zip(nominal_returns, inflation_rates):
 print(real_returns)
 
 
+
+# Q6:
+# 6. Linking, averaging, and annualizing returns
+# For the nominal portfolio returns in problem 5, calculate, over the full period:
+# a. the cumulative return;
+print(prod(map(lambda _real_return: _real_return, real_returns)))
+cumulative_returns = np.float_power(
+    prod(map(lambda _real_return: 1 + _real_return / 100.0, real_returns)),
+    1.0 / real_returns.shape[0]) - 1
+
+print(cumulative_returns)
+
+# b. the arithmetic mean rate of return;
+arithmetic_returns = sum(map(lambda _real_return: _real_return, real_returns)) / real_returns.shape[0]
+print(arithmetic_returns)
+
+# c. the geometric mean rate of return;
+## Isn't that the same question as a?
+
+# d. the geometric mean rate of return based on the approximation involving the arithmetic mean
+# and the standard deviation.
+
+s = np.std(list(map(lambda r: r / 100.0, real_returns)))
+approximated_geometric_returns = arithmetic_returns - 1.0 / 2 * s * s
+
+print(approximated_geometric_returns)
