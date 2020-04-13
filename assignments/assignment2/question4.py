@@ -21,33 +21,61 @@ def transform_values(values, forex_helpers, local_currency, foreign_currency):
 
 forex_helpers_before = ForexHelpers()
 forex_helpers_before.set_exchange_rate(Currency.Euros, Currency.Dollars, 1.4380)
-# print(forex_helpers_before.exchange_dict)
+
 forex_helpers_after = ForexHelpers()
 forex_helpers_after.set_exchange_rate(Currency.Euros, Currency.Dollars, 1.3387)
-# print(forex_helpers_after.exchange_dict)
 
-eu_equities = np.array([31.3, 34.6])
 us_equities = np.array([38.1, 41.3])
+eu_equities = np.array([31.3, 34.6])
+
 
 # For the portfolio for the month of September:
 # a. calculate the rate of return in the base currency ($)
-eu_equities_in_dollars = transform_values(eu_equities, [forex_helpers_before, forex_helpers_after], Currency.Euros, Currency.Dollars)
+eu_equities_in_dollars = transform_values(
+    eu_equities,
+    [forex_helpers_before, forex_helpers_after],
+    Currency.Euros,
+    Currency.Dollars)
 all_equities = eu_equities_in_dollars + us_equities
+dates = np.array(['31 Aug', '30 Sep'])
+
+print('Q4')
+print('(a)')
+print(f'Date            EU Equities in $')
+for (date, equities) in zip(dates, eu_equities_in_dollars):
+    print(f'{date}              {round(equities, 2)}')
 
 print()
-print(eu_equities_in_dollars)
-print(all_equities)
-print(f'The return of equities in dollars: {(all_equities[1] - all_equities[0]) / all_equities[1]}')
+print(f'Date            Total Equities in $')
+for (date, equities) in zip(dates, all_equities):
+    print(f'{date}              {round(equities, 2)}')
+
+print()
+print(f'The return of equities in $: {100 * (all_equities[1] - all_equities[0]) / all_equities[0]}')
 print()
 
 # b. convert the return to a euro (€) based return
-us_equities_in_euros = transform_values(us_equities, [forex_helpers_before, forex_helpers_after], Currency.Dollars, Currency.Euros)
+us_equities_in_euros = transform_values(
+    us_equities,
+    [forex_helpers_before,
+     forex_helpers_after],
+    Currency.Dollars,
+    Currency.Euros)
 all_equities = us_equities_in_euros + eu_equities
 
+print('(b)')
+
+print(f'Date            EU Equities in $')
+for (date, equities) in zip(dates, us_equities_in_euros):
+    print(f'{date}              {round(equities, 2)}')
+
 print()
-print(us_equities_in_euros)
-print(all_equities)
-print(f'The return of equities in euros: {(all_equities[1] - all_equities[0]) / all_equities[1]}')
+print(f'Date            Total Equities in $')
+for (date, equities) in zip(dates, all_equities):
+    print(f'{date}              {round(equities, 2)}')
+
+print()
+print(f'The return of equities in €: {100 * (all_equities[1] - all_equities[0]) / all_equities[0]}')
 print()
 
 
