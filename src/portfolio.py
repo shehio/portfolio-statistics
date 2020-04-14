@@ -16,14 +16,15 @@ class Portfolio:
             inception_date: datetime,
             securities=np.array([]),
             transactions_history=None,
-            constraints=None):
+            constraints=None,
+            dividends=0):
         self.cash = cash
         Portfolio.__validate_securities(securities)
         self.inception_date = inception_date
         self.securities = securities
         self.transactions_history = transactions_history
         self.constraints = constraints
-        self.dividends = 0
+        self.dividends = dividends
 
     def update_cash(self, cash):
         self.cash = cash
@@ -72,7 +73,7 @@ class Portfolio:
         pass
 
     def __repr__(self):
-        return f'{self.cash}, {self.securities}'
+        return f'{self.cash}, div: {self.dividends}, {self.securities}'
 
     @staticmethod
     def __validate_securities(securities):

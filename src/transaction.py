@@ -11,6 +11,8 @@ class Transaction:  # Or trade?
         self.date = date
         self.security = security
         self.shares = shares
-        self.price = ApiHelpers.get_close_price(security.ticker, date) * shares + abs(shares) * transaction_fee
+        self.transaction_value = ApiHelpers.get_close_price(security.ticker, date) * shares
+        self.transaction_cost = abs(self.transaction_value) * transaction_fee
+        self.price = self.transaction_value + self.transaction_cost
         self.currency = currency
         self.long = long

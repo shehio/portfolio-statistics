@@ -1,18 +1,20 @@
 from .portfolio import Portfolio
 
+import datetime
+
 
 class IoHelpers:
 
     @staticmethod
-    def write_holdings(account_name, portfolio: Portfolio):
+    def write_holdings(account_name: str, portfolio: Portfolio, date: datetime):
         csv = 'ticker,num.shares'
         for security in portfolio.securities:
             csv += f'{security.ticker},{security.shares}\n'
         csv += f'{portfolio.cash.ticker},{portfolio.cash.shares}'
 
-        text_file = open(f'H-{account_name}-{portfolio.inception_date}', 'w')
-        text_file.write(csv)
-        text_file.close()
+        # text_file = open(f'H-{account_name}-{portfolio.inception_date}', 'w')
+        # text_file.write(csv)
+        # text_file.close()
 
     @staticmethod
     def write_account_summary(

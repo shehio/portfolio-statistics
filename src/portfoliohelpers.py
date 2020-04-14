@@ -35,13 +35,14 @@ class PortfolioHelpers:
             np.append(new_securities, security)
 
         cash = Security('CASH', portfolio.cash.shares - transaction.price, 'None', Currency.Dollars)
-        return Portfolio(cash, transaction.date, new_securities)
+        return Portfolio(cash, transaction.date, new_securities, dividends=portfolio.dividends)
 
     @staticmethod
-    def check_for_splits(portfolio: Portfolio, start_date: datetime, end_date: datetime):
+    def get_portfolio_after_splits(portfolio: Portfolio, start_date: datetime, end_date: datetime):
         new_securities = portfolio.securities
         create_new_portfolio = False
         for stock in portfolio.securities:
+            # print(stock.ticker)
             aggregate_splits = ApiHelpers.get_range_splits(stock.ticker, start_date, end_date)
             if aggregate_splits != 0:
                 print(f'split for ticker: {stock.ticker} from {start_date} to {end_date} is: {aggregate_splits}')
@@ -51,8 +52,8 @@ class PortfolioHelpers:
         else:
             return portfolio
 
-    @staticmethod
-    def check_for_dividends(portfolio: Portfolio, start_date: datetime, end_date: datetime):
+    @staticmethod  # Requires major refactoring
+    def collect_dividends_if_any(portfolio: Portfolio, start_date: datetime, end_date: datetime):
         new_cash = 0
         for stock in portfolio.securities:
             aggregate_dividends = ApiHelpers.get_range_dividends(stock.ticker, start_date, end_date)
@@ -63,7 +64,7 @@ class PortfolioHelpers:
             old_cash = portfolio.cash
             aggregate_cash = old_cash.shares + new_cash
             aggregate_cash = Security(old_cash.ticker, aggregate_cash, 'None', Currency.Dollars)
-            return Portfolio(aggregate_cash, end_date, portfolio.securities)
+            return Portfolio(aggregate_cash, end_date, portfolio.securities, dividends=new_cash)
         else:
             return portfolio
 
