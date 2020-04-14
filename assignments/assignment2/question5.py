@@ -58,24 +58,25 @@ for (nominal_return, real_return) in zip(nominal_returns, real_returns):
 # a. the cumulative return;
 print('Q6')
 print('(a)')
-geometric_return = cumulative_return = (np.float_power(
-    prod(map(lambda _real_return: 1 + _real_return / 100.0, real_returns)),
-    1.0 / real_returns.shape[0]) - 1) * 100
-
+cumulative_return = prod(map(lambda _real_return: 1 + _real_return / 100.0, real_returns)) - 1
 print(f'Cumulative Return: {cumulative_return}')
+
 
 # b. the arithmetic mean rate of return;
 arithmetic_return = sum(map(lambda _real_return: _real_return, real_returns)) / real_returns.shape[0]
 print('(b)')
-print(f'Arithmetic Return: {arithmetic_return}')
+print(f'Arithmetic Mean Rate Of Return: {arithmetic_return}')
 
 # c. the geometric mean rate of return;
 print('(c)')
-print(f'Geometric Return: {geometric_return}')
+geometric_return = (np.float_power(
+    prod(map(lambda _real_return: 1 + _real_return / 100.0, real_returns)),
+    1.0 / real_returns.shape[0]) - 1) * 100
+print(f'Geometric Mean Rate Of Return: {geometric_return}')
 
 # d. the geometric mean rate of return based on the approximation involving the arithmetic mean
 # and the standard deviation.
 print('(d)')
 s2 = 1 / (real_returns.shape[0] - 1) * sum(map(lambda r: (r / 100 - arithmetic_return / 100) ** 2, real_returns))
 approximated_geometric_return = (arithmetic_return / 100 - (1.0 / 2) * s2) * 100
-print(f'Approximated Geometric Return: {approximated_geometric_return}')
+print(f'Approximated Geometric Mean Rate Of Return: {approximated_geometric_return}')

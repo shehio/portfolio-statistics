@@ -37,6 +37,9 @@ class Portfolio:
         return self.cash.shares + sum(map(
             lambda security: ApiHelpers.get_close_price(security.ticker, date) * security.shares, self.securities))
 
+    def reset_dividends(self):
+        self.dividends = 0
+
     def get_allocations(self):
         pass
 
@@ -54,13 +57,6 @@ class Portfolio:
 
     def get_pre_tax_liquidation_value(self, liquidation_date):
         return self.get_value(liquidation_date)
-
-    # Assuming no shorting is allowed.
-    def get_post_tax_liquidation_value(self, liquidation_date, capital_gain_tax_rate, dividends_tax_rate):
-        total_tax = 0
-        total_tax +=\
-            max(self.get_value(liquidation_date) - self.get_value(self.inception_date), 0) * capital_gain_tax_rate
-        total_tax += self.get_all_dividends(liquidation_date) * dividends_tax_rate
 
     def get_all_dividends(self, liquidation_date):
         current_dividends = sum(map(

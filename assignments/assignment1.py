@@ -65,7 +65,8 @@ that_initial_balance = 1000 * 1000
 current_tickers = ["AAPL","ALK", "AMZN", "ADBE", "GOOGL", "CSCO", "CIT",  "DAL", "EA", "GS",
             "IBM", "LYFT", "EXPE", "MS",  "MSFT", "NKE", "T", "TWTR", "UBER", "VMW"]
 
-weekly_fees = np.array([0])
+weekly_fees = np.array([])
+dividends_collection = np.array([])
 
 # Q0
 portfolio = establish_portfolio(that_initial_balance, start_date, current_tickers, broker_transaction_cost)
@@ -111,13 +112,13 @@ IoHelpers.write_holdings('yassers', new_portfolio, assignment1_end_date)
 print(new_portfolio.__repr__())
 
 # Q7:
-assignment1_portfolio_value = new_portfolio.get_value(assignment1_end_date)
+portfolio_value_by_the_end_of_week_1 = new_portfolio.get_value(assignment1_end_date)
 second_income_return = get_div_return(
     value_before=portfolio_value_by_the_end_of_week_0,
     value_after=new_portfolio.dividends)
 second_price_return = get_price_return(
     value_before=portfolio_value_by_the_end_of_week_0,
-    value_after=assignment1_portfolio_value - new_portfolio.dividends)
+    value_after=portfolio_value_by_the_end_of_week_1 - new_portfolio.dividends)
 second_total_return = second_price_return + second_income_return
 myprint([f'Second Income Return = {second_income_return}',
          f'Second Price Return = {second_price_return}',
@@ -127,44 +128,65 @@ myprint([f'Second Income Return = {second_income_return}',
 # # ### Assignment 2:
 # #  Q1: Check your stocks for any splits or any dividends
 # # This implementation has bugs because splits and dividends should be checked simultaneously. Day by day.
-# new_portfolio = PortfolioHelpers.get_portfolio_after_splits(new_portfolio, assignment1_end_date, assignment2_end_date)
-# new_portfolio = PortfolioHelpers.add_dividends_if_any(new_portfolio, assignment1_end_date, assignment2_end_date)
+dividends_collection = np.append(dividends_collection, new_portfolio.dividends)
+new_portfolio.reset_dividends()
+new_portfolio = PortfolioHelpers.get_portfolio_after_splits(new_portfolio, assignment1_end_date, assignment2_end_date)
+new_portfolio = PortfolioHelpers.collect_dividends_if_any(new_portfolio, assignment1_end_date, assignment2_end_date)
 #
-# weekly_fee = PortfolioHelpers.get_fee(new_portfolio,  annual_fee, FeeFrequency.weekly, assignment2_end_date)
-# weekly_fees = np.append(weekly_fees, weekly_fee)
-#
-# print()
-# print(f'The cash before discounting the fee is: {new_portfolio.cash}')
-# new_portfolio.discount_fee(weekly_fee)
-# print(f'The weekly fee on date: {assignment2_end_date} is: {weekly_fee}, the cash value afterwards: {new_portfolio.cash}')
-# print()
-#
-# assignment2_portfolio_value = new_portfolio.get_value(assignment2_end_date)
-# second_price_return = (assignment2_portfolio_value - assignment1_portfolio_value) / assignment2_portfolio_value * 100
-# second_total_return = second_price_return
-# print(f'Total Return = Price Return = {second_total_return}, since dividends are all zero.')
-# print(f'The portfolios worth at the end of week 3: {new_portfolio.get_value(assignment2_end_date)}')
-#
-# # Q2:
-# # The returns calculated for the portfolio so far are net-of-fees returns. Calculate the following
-# # additional items, as of 10 April 2020:
-# # a. Calculate the linked net-of-fees return for the period from inception to 10 April 2020.
-# # Reminder: the inception of the portfolio measurement period is the market close on 27
-# # March 2020.
-# assignment2_portfolio_value = new_portfolio.get_value(assignment2_end_date)
-# net_of_fees_returns = (assignment2_portfolio_value + sum(map(lambda fee: fee, weekly_fees)) - initial_portfolio_value) / assignment2_portfolio_value * 100
-# print()
-# print(f'Net of fees returns = {net_of_fees_returns}')
-# print()
-#
-# # b. Calculate an approximate gross-of-fees return from inception to this date. Describe any assumptions used.
-# gross_of_fees_returns = (assignment2_portfolio_value - initial_portfolio_value) / assignment2_portfolio_value * 100
-# print()
-# print(f'Gross of fees returns = {gross_of_fees_returns}')
-# print()
-#
-# # c. Assuming the portfolio is liquidated on 10 April 2020, calculate the post-tax post redemption
-# # return from inception to this date.Assume an income tax rate of 15% for both
-# # dividends and realized capital gains.
-# # Use this method: get_post_tax_liquidation_value.
+weekly_fee = PortfolioHelpers.get_fee(new_portfolio, annual_fee, FeeFrequency.weekly, assignment1_end_date)
+weekly_fees = np.append(weekly_fees, weekly_fee)
+
+portfolio_cash_before_fee = new_portfolio.cash.shares
+new_portfolio.discount_fee(weekly_fee)
+myprint([f'The cash before discounting the fee is: {portfolio_cash_before_fee}',
+         f'The weekly fee on: {weekly_fee_date} is: {weekly_fee}, cash in portfolio afterwards: {new_portfolio.cash}'])
+
+portfolio_value_by_the_end_of_week_2 = new_portfolio.get_value(assignment2_end_date)
+third_income_return = get_div_return(
+    value_before=portfolio_value_by_the_end_of_week_1,
+    value_after=new_portfolio.dividends)
+third_price_return = get_price_return(
+    value_before=portfolio_value_by_the_end_of_week_1,
+    value_after=portfolio_value_by_the_end_of_week_2 - new_portfolio.dividends)
+third_total_return = third_price_return + third_income_return
+myprint([f'Third Income Return = {third_income_return}',
+         f'Third Price Return = {third_price_return}',
+         f'Third Total Return = {third_total_return}'])
+
+# Q2:
+# The returns calculated for the portfolio so far are net-of-fees returns. Calculate the following
+# additional items, as of 10 April 2020:
+# a. Calculate the linked net-of-fees return for the period from inception to 10 April 2020.
+# Reminder: the inception of the portfolio measurement period is the market close on 27
+# March 2020.
+assignment2_portfolio_value = new_portfolio.get_value(assignment2_end_date)
+net_of_fees_returns = get_price_return(
+    value_before=portfolio_value_by_the_end_of_week_0,
+    value_after=portfolio_value_by_the_end_of_week_2)
+myprint([f'Net of fees returns = {net_of_fees_returns}'])
+
+# b. Calculate an approximate gross-of-fees return from inception to this date. Describe any assumptions used.
+assignment2_portfolio_value = new_portfolio.get_value(assignment2_end_date)
+gross_of_fees_returns = get_price_return(
+    value_before=portfolio_value_by_the_end_of_week_0,
+    value_after=portfolio_value_by_the_end_of_week_2 + + sum(map(lambda fee: fee, weekly_fees)))
+myprint([f'Gross of fees returns = {gross_of_fees_returns}'])
+
+# c. Assuming the portfolio is liquidated on 10 April 2020, calculate the post-tax post redemption
+# return from inception to this date.Assume an income tax rate of 15% for both
+# dividends and realized capital gains.
+# Use this method: get_post_tax_liquidation_value.
+dividends_collection = np.append(dividends_collection, new_portfolio.dividends)
+new_portfolio.reset_dividends()
+assignment2_post_tax_portfolio_value = \
+    PortfolioHelpers.get_post_tax_liquidation_value(
+        current_value=portfolio_value_by_the_end_of_week_2,
+        capital_gain=max(0, portfolio_value_by_the_end_of_week_2 - portfolio_value_by_the_end_of_week_0),
+        dividends= sum(map(lambda _dividend: _dividend, dividends_collection)),
+        capital_gain_tax_rate=0.15,
+        dividends_tax_rate=0.15)
+
+myprint([f'The pre-tax value of the portfolio: {assignment2_portfolio_value}',
+         f'The post-tax value of the portfolio: {assignment2_post_tax_portfolio_value}'])
+
 

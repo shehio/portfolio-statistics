@@ -5,12 +5,25 @@
 # 15 Feb 2020 150.08
 # 15 Mar 2020 155.72
 
+# interest / percent / months * months from Nov * face value.
+interest_accrued_til_feb = 6.25 / 100 / 12 * 3 * 100
+interest_accrued_til_march = 6.25 / 100 / 12 * 4 * 100
+price_in_feb = 150.08
+price_in_march = 155.72
+income_return = (interest_accrued_til_march - interest_accrued_til_feb) / price_in_feb * 100
+price_return = (price_in_march/price_in_feb - 1) * 100
+total_return = income_return + price_return
+
 # Calculate, for the holding period from 15 Feb 2020 to 15 Mar 2020:
-# a. the total rate of return;
-total_return = ((155.72/150.08 - 1) + 0) * 100
-# b. the price return;
-price_return = (155.72/150.08 - 1) * 100
-# c. the income return.
-income_return = 0
 print('Q3')
-print(f'Income Return: {income_return}, Price Return: {price_return}, Total Return: {total_return}')
+# a. the total rate of return;
+print('(a)')
+print(f'Total Return: {total_return}')
+
+# b. the price return;
+print('(b)')
+print(f'Price Return: {price_return}')
+
+# c. the income return.
+print('(c)')
+print(f'Income Return: {income_return}')

@@ -48,7 +48,7 @@ class PortfolioHelpers:
                 print(f'split for ticker: {stock.ticker} from {start_date} to {end_date} is: {aggregate_splits}')
                 new_securities = PortfolioHelpers.__add_split_stock(new_securities, stock, aggregate_splits)
         if create_new_portfolio:
-            return Portfolio(portfolio.cash, end_date, new_securities)
+            return Portfolio(portfolio.cash, end_date, new_securities, dividends=portfolio.dividends)
         else:
             return portfolio
 
@@ -78,6 +78,15 @@ class PortfolioHelpers:
             fee = annual_fee
 
         return fee * portfolio.get_value(date)
+
+    @staticmethod
+    def get_post_tax_liquidation_value(
+            current_value,
+            capital_gain,
+            dividends,
+            capital_gain_tax_rate,
+            dividends_tax_rate):
+        return current_value - capital_gain * capital_gain_tax_rate - dividends * dividends_tax_rate
 
     @staticmethod
     def __add_split_stock(new_securities, stock, aggregate_splits):
