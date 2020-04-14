@@ -42,11 +42,12 @@ def establish_portfolio(initial_balance, inception_date, tickers, transaction_co
         _transaction = Transaction(inception_date, _security, shares, transaction_cost, Currency.Dollars)
         transactions_history.push_transaction(_transaction)
 
-    current_balance = initial_balance - sum(map(
+    total_transaction_cost = sum(map(
         lambda _transaction: _transaction.price,
         transactions_history.transactions))
+    current_balance = initial_balance - total_transaction_cost
     current_balance = Security('CASH', current_balance, 'None', Currency.Dollars)
-    return Portfolio(current_balance, inception_date, securities, transactions_history)
+    return Portfolio(current_balance, inception_date, securities, transactions_history), total_transaction_cost
 
 
 security_count = 20
@@ -65,11 +66,15 @@ that_initial_balance = 1000 * 1000
 current_tickers = ["AAPL","ALK", "AMZN", "ADBE", "GOOGL", "CSCO", "CIT",  "DAL", "EA", "GS",
             "IBM", "LYFT", "EXPE", "MS",  "MSFT", "NKE", "T", "TWTR", "UBER", "VMW"]
 
-weekly_fees = np.array([])
-dividends_collection = np.array([])
+weekly_fees = np.array([0])
+dividends_collection = np.array([0])
 
 # Q0
-portfolio = establish_portfolio(that_initial_balance, start_date, current_tickers, broker_transaction_cost)
+portfolio, week0_transaction_cost = establish_portfolio(
+    that_initial_balance,
+    start_date,
+    current_tickers,
+    broker_transaction_cost)
 myprint([portfolio.__repr__()])
 
 # Q1: Calculate the total value of the portfolio after the trades.
@@ -78,7 +83,8 @@ IoHelpers.write_holdings('yassers', portfolio, start_date)
 
 # Q2: Calculate the return of the transition period (prior to inception) based on the beginning value of $1 million.
 portfolio_value_by_the_end_of_week_0 = portfolio.get_value(start_date)
-first_total_return = get_price_return(
+first_income_return = 0
+first_price_return = first_total_return = get_price_return(
     value_before=that_initial_balance,
     value_after=portfolio_value_by_the_end_of_week_0)
 myprint([f'Total Return = Price Return = {first_total_return}, since dividends are all zero.'])
@@ -100,12 +106,15 @@ myprint([f'The cash before discounting the fee is: {portfolio_cash_before_fee}',
          f'The weekly fee on: {weekly_fee_date} is: {weekly_fee}, cash in portfolio afterwards: {new_portfolio.cash}'])
 
 # Q6: Make a trade.  # Eliminate the repeatability here.
+week1_transaction_cost = 0
 security = Security('AAPL', -1, 'NASDAQ', Currency.Dollars)
 transaction = Transaction(trade_date, security, -1, broker_transaction_cost, Currency.Dollars)
+week1_transaction_cost += transaction.transaction_cost
 new_portfolio = PortfolioHelpers.make_trade(new_portfolio, security, transaction)
 
 security = Security('ALK', 10, 'NASDAQ', Currency.Dollars)
 transaction = Transaction(trade_date, security, 10, broker_transaction_cost, Currency.Dollars)
+week1_transaction_cost += transaction.transaction_cost
 new_portfolio = PortfolioHelpers.make_trade(new_portfolio, security, transaction)
 
 IoHelpers.write_holdings('yassers', new_portfolio, assignment1_end_date)
@@ -153,6 +162,22 @@ myprint([f'Third Income Return = {third_income_return}',
          f'Third Price Return = {third_price_return}',
          f'Third Total Return = {third_total_return}'])
 
+dividends_collection = np.append(dividends_collection, new_portfolio.dividends)
+
+IoHelpers.write_holdings('yassers', new_portfolio, assignment2_end_date)
+IoHelpers.write_account_summary(
+    account_name='yassers',
+    dates=[start_date, assignment1_end_date, assignment2_end_date],
+    deposits=[that_initial_balance, 0, 0],
+    withdrawals=[0, 0, 0],
+    dividends=dividends_collection,
+    fees=weekly_fees,
+    transactional_costs=[week0_transaction_cost, week1_transaction_cost, 0],
+    values=[portfolio_value_by_the_end_of_week_0, portfolio_value_by_the_end_of_week_1, portfolio_value_by_the_end_of_week_2],
+    income_returns=[first_income_return, second_income_return, third_income_return],
+    price_returns=[first_price_return, second_price_return, third_price_return],
+    total_returns=[first_total_return, second_total_return, third_total_return])
+
 # Q2:
 # The returns calculated for the portfolio so far are net-of-fees returns. Calculate the following
 # additional items, as of 10 April 2020:
@@ -176,8 +201,6 @@ myprint([f'Gross of fees returns = {gross_of_fees_returns}'])
 # return from inception to this date.Assume an income tax rate of 15% for both
 # dividends and realized capital gains.
 # Use this method: get_post_tax_liquidation_value.
-dividends_collection = np.append(dividends_collection, new_portfolio.dividends)
-new_portfolio.reset_dividends()
 assignment2_post_tax_portfolio_value = \
     PortfolioHelpers.get_post_tax_liquidation_value(
         current_value=portfolio_value_by_the_end_of_week_2,
@@ -188,5 +211,3 @@ assignment2_post_tax_portfolio_value = \
 
 myprint([f'The pre-tax value of the portfolio: {assignment2_portfolio_value}',
          f'The post-tax value of the portfolio: {assignment2_post_tax_portfolio_value}'])
-
-
