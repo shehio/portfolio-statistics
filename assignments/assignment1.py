@@ -133,15 +133,15 @@ myprint([f'Second Income Return = {second_income_return}',
          f'Second Price Return = {second_price_return}',
          f'Second Total Return = {second_total_return}'])
 
-#
-# # ### Assignment 2:
-# #  Q1: Check your stocks for any splits or any dividends
-# # This implementation has bugs because splits and dividends should be checked simultaneously. Day by day.
+
+# ### Assignment 2:
+#  Q1: Check your stocks for any splits or any dividends
+# This implementation has bugs because splits and dividends should be checked simultaneously. Day by day.
 dividends_collection = np.append(dividends_collection, new_portfolio.dividends)
 new_portfolio.reset_dividends()
 new_portfolio = PortfolioHelpers.get_portfolio_after_splits(new_portfolio, assignment1_end_date, assignment2_end_date)
 new_portfolio = PortfolioHelpers.collect_dividends_if_any(new_portfolio, assignment1_end_date, assignment2_end_date)
-#
+
 weekly_fee = PortfolioHelpers.get_fee(new_portfolio, annual_fee, FeeFrequency.weekly, assignment1_end_date)
 weekly_fees = np.append(weekly_fees, weekly_fee)
 
@@ -165,18 +165,6 @@ myprint([f'Third Income Return = {third_income_return}',
 dividends_collection = np.append(dividends_collection, new_portfolio.dividends)
 
 IoHelpers.write_holdings('yassers', new_portfolio, assignment2_end_date)
-IoHelpers.write_account_summary(
-    account_name='yassers',
-    dates=[start_date, assignment1_end_date, assignment2_end_date],
-    deposits=[that_initial_balance, 0, 0],
-    withdrawals=[0, 0, 0],
-    dividends=dividends_collection,
-    fees=weekly_fees,
-    transactional_costs=[week0_transaction_cost, week1_transaction_cost, 0],
-    values=[portfolio_value_by_the_end_of_week_0, portfolio_value_by_the_end_of_week_1, portfolio_value_by_the_end_of_week_2],
-    income_returns=[first_income_return, second_income_return, third_income_return],
-    price_returns=[first_price_return, second_price_return, third_price_return],
-    total_returns=[first_total_return, second_total_return, third_total_return])
 
 # Q2:
 # The returns calculated for the portfolio so far are net-of-fees returns. Calculate the following
@@ -214,6 +202,7 @@ myprint([f'The pre-tax value of the portfolio: {assignment2_portfolio_value}',
 
 
 # Assignment 3:
+new_portfolio.reset_dividends()
 assignment3_end_date = datetime.date(2020, 4, 17)
 assignment2_end_date = datetime.date(2020, 4, 9)  # Market was closed on Good Friday.
 assignment3_trade_date = datetime.date(2020, 4, 17)
@@ -238,6 +227,8 @@ IoHelpers.write_holdings('yassers', new_portfolio, assignment2_end_date)
 # Use the writeHoldings function to write a holdings text file for 2020-04-17, after the transactions on that date.
 # Please submit your holdings files for all four weeks.
 new_portfolio = PortfolioHelpers.collect_dividends_if_any(new_portfolio, assignment2_end_date, assignment3_end_date)
+dividends_collection = np.append(dividends_collection, new_portfolio.dividends)
+
 new_portfolio = PortfolioHelpers.get_portfolio_after_splits(new_portfolio, assignment2_end_date, assignment3_end_date)
 
 weekly_fee = PortfolioHelpers.get_fee(new_portfolio, annual_fee, FeeFrequency.weekly, assignment2_end_date)
@@ -248,17 +239,54 @@ new_portfolio.discount_fee(weekly_fee)
 myprint([f'The cash before discounting the fee is: {portfolio_cash_before_fee}',
          f'The weekly fee on: {assignment2_end_date} is: {weekly_fee}, cash in portfolio afterwards: {new_portfolio.cash}'])
 
+week3_transaction_cost = 0
 security = Security('AAPL', 178, 'NASDAQ', Currency.Dollars)
 transaction = Transaction(assignment3_trade_date, security, 170, broker_transaction_cost, Currency.Dollars)
-week1_transaction_cost += transaction.transaction_cost
+week3_transaction_cost += transaction.transaction_cost
 new_portfolio = PortfolioHelpers.make_trade(new_portfolio, security, transaction)
 
 security = Security('ALK', 1666, 'NASDAQ', Currency.Dollars)
 transaction = Transaction(assignment3_trade_date, security, 1500, broker_transaction_cost, Currency.Dollars)
-week1_transaction_cost += transaction.transaction_cost
+week3_transaction_cost += transaction.transaction_cost
 new_portfolio = PortfolioHelpers.make_trade(new_portfolio, security, transaction)
 
+print(new_portfolio)
 assert new_portfolio.cash.shares / new_portfolio.get_value(assignment3_end_date) < 0.05
 
 IoHelpers.write_holdings('yassers', new_portfolio, assignment3_end_date)
 
+
+# Question 3
+# Value the portfolio as of 17 April and calculate the portfolio income return, price return, and total
+# rate of return for the week ending 2020-04-17. Use the writeAccountSummary function to write an
+# account summary text file for the four end-of-week dates through 2020-04-17.
+portfolio_value_by_the_end_of_week_3 = new_portfolio.get_value(assignment3_end_date)
+fourth_income_return = get_div_return(
+    value_before=portfolio_value_by_the_end_of_week_2,
+    value_after=new_portfolio.dividends)
+fourth_price_return = get_price_return(
+    value_before=portfolio_value_by_the_end_of_week_2,
+    value_after=portfolio_value_by_the_end_of_week_1 - new_portfolio.dividends)
+fourth_total_return = fourth_income_return + fourth_price_return
+
+IoHelpers.write_account_summary(
+    account_name='yassers',
+    dates=[start_date, assignment1_end_date, assignment2_end_date, assignment3_end_date],
+    deposits=[that_initial_balance, 0, 0, 100_000],
+    withdrawals=[0, 0, 0, 0],
+    dividends=dividends_collection,
+    fees=weekly_fees,
+    transactional_costs=[week0_transaction_cost, week1_transaction_cost, 0, week3_transaction_cost],
+    values=[
+        portfolio_value_by_the_end_of_week_0,
+        portfolio_value_by_the_end_of_week_1,
+        portfolio_value_by_the_end_of_week_2,
+        portfolio_value_by_the_end_of_week_3],
+    income_returns=[first_income_return, second_income_return, third_income_return, fourth_income_return],
+    price_returns=[first_price_return, second_price_return, third_price_return, fourth_price_return],
+    total_returns=[first_total_return, second_total_return, third_total_return, fourth_total_return])
+
+# 4. Assume that the initial cash flow of $1 million entered the portfolio at the end of the day on 23 March 2020.
+# For the full period from 23 March 2020 to 17 April 2020, Calculate:
+# a. The time-weighted rate of return
+# b.The money-weighted rate of return. With your solution, show the equation that the rate must satisfy.
