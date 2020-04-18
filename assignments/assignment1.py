@@ -8,9 +8,9 @@ from src.security import Security
 from src.transaction import Transaction
 from src.transactionshistory import TransactionsHistory
 
-
 import datetime
 import numpy as np
+import sympy
 
 
 def get_div_return(value_before, value_after):
@@ -63,8 +63,8 @@ trade_date = datetime.date(2020, 4, 3)
 weekly_fee_date = datetime.date(2020, 4, 3)
 that_initial_balance = 1000 * 1000
 
-current_tickers = ["AAPL","ALK", "AMZN", "ADBE", "GOOGL", "CSCO", "CIT",  "DAL", "EA", "GS",
-            "IBM", "LYFT", "EXPE", "MS",  "MSFT", "NKE", "T", "TWTR", "UBER", "VMW"]
+current_tickers = ["AAPL", "ALK", "AMZN", "ADBE", "GOOGL", "CSCO", "CIT", "DAL", "EA", "GS",
+                   "IBM", "LYFT", "EXPE", "MS", "MSFT", "NKE", "T", "TWTR", "UBER", "VMW"]
 
 weekly_fees = np.array([0])
 dividends_collection = np.array([0])
@@ -133,7 +133,6 @@ myprint([f'Second Income Return = {second_income_return}',
          f'Second Price Return = {second_price_return}',
          f'Second Total Return = {second_total_return}'])
 
-
 # ### Assignment 2:
 #  Q1: Check your stocks for any splits or any dividends
 # This implementation has bugs because splits and dividends should be checked simultaneously. Day by day.
@@ -193,19 +192,19 @@ assignment2_post_tax_portfolio_value = \
     PortfolioHelpers.get_post_tax_liquidation_value(
         current_value=portfolio_value_by_the_end_of_week_2,
         capital_gain=max(0, portfolio_value_by_the_end_of_week_2 - portfolio_value_by_the_end_of_week_0),
-        dividends= sum(map(lambda _dividend: _dividend, dividends_collection)),
+        dividends=sum(map(lambda _dividend: _dividend, dividends_collection)),
         capital_gain_tax_rate=0.15,
         dividends_tax_rate=0.15)
 
 myprint([f'The pre-tax value of the portfolio: {assignment2_portfolio_value}',
          f'The post-tax value of the portfolio: {assignment2_post_tax_portfolio_value}'])
 
-
 # Assignment 3:
 new_portfolio.reset_dividends()
 assignment3_end_date = datetime.date(2020, 4, 17)
 assignment2_end_date = datetime.date(2020, 4, 9)  # Market was closed on Good Friday.
 assignment3_trade_date = datetime.date(2020, 4, 17)
+week3_cash_infusion = 100_000
 
 # Question 1:
 # Your client has deposited $100,000 to the account on 9 April 2020. Assume that the cash flow occurred at the close.
@@ -214,9 +213,8 @@ assignment3_trade_date = datetime.date(2020, 4, 17)
 # but don’t be concerned about that for now.
 # Use the writeHoldings function to write a revised holdings text file for 2014-04-09,
 # with this deposit added to the liquidity reserve.
-new_portfolio.cash.shares += 100_000
+new_portfolio.cash.shares += week3_cash_infusion
 IoHelpers.write_holdings('yassers', new_portfolio, assignment2_end_date)
-
 
 # Question 2:
 # For the week from 9 April to 17 April, check your portfolio for any splits and adjust holdings accordingly.
@@ -255,7 +253,6 @@ assert new_portfolio.cash.shares / new_portfolio.get_value(assignment3_end_date)
 
 IoHelpers.write_holdings('yassers', new_portfolio, assignment3_end_date)
 
-
 # Question 3
 # Value the portfolio as of 17 April and calculate the portfolio income return, price return, and total
 # rate of return for the week ending 2020-04-17. Use the writeAccountSummary function to write an
@@ -286,7 +283,58 @@ IoHelpers.write_account_summary(
     price_returns=[first_price_return, second_price_return, third_price_return, fourth_price_return],
     total_returns=[first_total_return, second_total_return, third_total_return, fourth_total_return])
 
-# 4. Assume that the initial cash flow of $1 million entered the portfolio at the end of the day on 23 March 2020.
+# Question 4
+# Assume that the initial cash flow of $1 million entered the portfolio at the end of the day on 23 March 2020.
 # For the full period from 23 March 2020 to 17 April 2020, Calculate:
 # a. The time-weighted rate of return
 # b.The money-weighted rate of return. With your solution, show the equation that the rate must satisfy.
+week1_return = portfolio_value_by_the_end_of_week_1 / portfolio_value_by_the_end_of_week_0
+week2_return = portfolio_value_by_the_end_of_week_2 / portfolio_value_by_the_end_of_week_1
+week3_return = (portfolio_value_by_the_end_of_week_3 - week3_cash_infusion) / portfolio_value_by_the_end_of_week_2
+time_weighted_rate_of_return = week3_return * week2_return * week1_return - 1
+
+r = sympy.symbols('r', real=True, positive=True)
+equation = sympy.Eq(
+    portfolio_value_by_the_end_of_week_3,
+    that_initial_balance * (1 + r) + week3_cash_infusion * ((1 + r) ** (7 / 21)))
+internal_rate_of_return = money_weighted_rate_of_return = sympy.solve(equation)[0]
+myprint([f'Time-Weighted rate of return = {time_weighted_rate_of_return}',
+         f'Money-Weighted rate of return = {internal_rate_of_return}'])
+
+# Question 5
+# Suppose that the portfolio valuation on 9 April is not available. For the period from 2020-04-03 to 2020-04-17:
+# a. Calculate a return using the mid-point Dietz formula.
+simple_dietz_return = \
+    (portfolio_value_by_the_end_of_week_3 - portfolio_value_by_the_end_of_week_1 - week3_cash_infusion) / \
+    (portfolio_value_by_the_end_of_week_1 - week3_cash_infusion / 2)
+
+# b. Calculate a return using the modified (day-weighted) Dietz formula.
+modified_dietz_return = \
+    (portfolio_value_by_the_end_of_week_3 - portfolio_value_by_the_end_of_week_1 - week3_cash_infusion) / \
+    (portfolio_value_by_the_end_of_week_1 + week3_cash_infusion * 7 / 21)
+
+# c. Calculate the internal rate of return.
+equation = sympy.Eq(
+    portfolio_value_by_the_end_of_week_3,
+    portfolio_value_by_the_end_of_week_1 * (1 + r) + week3_cash_infusion * (1 + r) ** (8 / 14))
+money_weighted_rate_of_return_for_weeks_1_3 = sympy.solve(equation)
+
+# d. For comparison, also calculate the true time-weighted return, using the 9 April valuation.
+week2_return = portfolio_value_by_the_end_of_week_2 / portfolio_value_by_the_end_of_week_1
+week3_return = (portfolio_value_by_the_end_of_week_3 - week3_cash_infusion) / portfolio_value_by_the_end_of_week_2
+true_time_weighted_rate_of_return = week3_return * week2_return * week1_return - 1
+
+myprint(['Q5',
+         f'simple_dietz_return = {simple_dietz_return}',
+         f'Modified Dietz rate of return = {modified_dietz_return}',
+         f'Money-Weighted rate of return = {money_weighted_rate_of_return_for_weeks_1_3}',
+         f'True Time-Weighted rate of return = {true_time_weighted_rate_of_return}'])
+
+# Question 6
+# For this question, we are interested in the time-weighted return from 2020-03-27 to 2020-04-17.
+# As in question 5, suppose that the portfolio valuation on 9 April is not available.
+# a. Calculate a return using the linked mid-point Dietz method.
+# b. Calculate a return using the linked modified Dietz method.
+# c. Calculate a return using the linked IRR method.
+# d. For comparison, also calculate the true time-weighted return, using the 9 April valuation.
+
