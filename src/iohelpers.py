@@ -12,7 +12,7 @@ class IoHelpers:
             csv += f'{security.ticker},{security.shares}\n'
         csv += f'{portfolio.cash.ticker},{portfolio.cash.shares}'
 
-        text_file = open(f'H-{account_name}-{portfolio.inception_date}', 'w')
+        text_file = open(f'H-{account_name}-{date}', 'w')
         text_file.write(csv)
         text_file.close()
 

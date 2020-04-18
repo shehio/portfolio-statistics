@@ -211,3 +211,54 @@ assignment2_post_tax_portfolio_value = \
 
 myprint([f'The pre-tax value of the portfolio: {assignment2_portfolio_value}',
          f'The post-tax value of the portfolio: {assignment2_post_tax_portfolio_value}'])
+
+
+# Assignment 3:
+assignment3_end_date = datetime.date(2020, 4, 17)
+assignment2_end_date = datetime.date(2020, 4, 9)  # Market was closed on Good Friday.
+assignment3_trade_date = datetime.date(2020, 4, 17)
+
+# Question 1:
+# Your client has deposited $100,000 to the account on 9 April 2020. Assume that the cash flow occurred at the close.
+# Add the amount to the liquidity reserve on that date and adjust the total portfolio value accordingly.
+# The portfolio weights will temporarily be out of compliance with the 5% limit on cash,
+# but don’t be concerned about that for now.
+# Use the writeHoldings function to write a revised holdings text file for 2014-04-09,
+# with this deposit added to the liquidity reserve.
+new_portfolio.cash.shares += 100_000
+IoHelpers.write_holdings('yassers', new_portfolio, assignment2_end_date)
+
+
+# Question 2:
+# For the week from 9 April to 17 April, check your portfolio for any splits and adjust holdings accordingly.
+# Check for any dividends and add to the liquidity reserve accordingly.
+# Calculate the management fee and deduct from the liquidity reserve.
+# On 17 April, purchase (and/or optionally sell) shares at the closing prices on that date to
+# bring the portfolio weights back to within the mandate guidelines.
+# Use the writeHoldings function to write a holdings text file for 2020-04-17, after the transactions on that date.
+# Please submit your holdings files for all four weeks.
+new_portfolio = PortfolioHelpers.collect_dividends_if_any(new_portfolio, assignment2_end_date, assignment3_end_date)
+new_portfolio = PortfolioHelpers.get_portfolio_after_splits(new_portfolio, assignment2_end_date, assignment3_end_date)
+
+weekly_fee = PortfolioHelpers.get_fee(new_portfolio, annual_fee, FeeFrequency.weekly, assignment2_end_date)
+weekly_fees = np.append(weekly_fees, weekly_fee)
+
+portfolio_cash_before_fee = new_portfolio.cash.shares
+new_portfolio.discount_fee(weekly_fee)
+myprint([f'The cash before discounting the fee is: {portfolio_cash_before_fee}',
+         f'The weekly fee on: {assignment2_end_date} is: {weekly_fee}, cash in portfolio afterwards: {new_portfolio.cash}'])
+
+security = Security('AAPL', 178, 'NASDAQ', Currency.Dollars)
+transaction = Transaction(assignment3_trade_date, security, 170, broker_transaction_cost, Currency.Dollars)
+week1_transaction_cost += transaction.transaction_cost
+new_portfolio = PortfolioHelpers.make_trade(new_portfolio, security, transaction)
+
+security = Security('ALK', 1666, 'NASDAQ', Currency.Dollars)
+transaction = Transaction(assignment3_trade_date, security, 1500, broker_transaction_cost, Currency.Dollars)
+week1_transaction_cost += transaction.transaction_cost
+new_portfolio = PortfolioHelpers.make_trade(new_portfolio, security, transaction)
+
+assert new_portfolio.cash.shares / new_portfolio.get_value(assignment3_end_date) < 0.05
+
+IoHelpers.write_holdings('yassers', new_portfolio, assignment3_end_date)
+
