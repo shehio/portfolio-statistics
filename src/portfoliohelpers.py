@@ -34,7 +34,7 @@ class PortfolioHelpers:
             new_securities = portfolio.securities
             np.append(new_securities, security)
 
-        cash = Security('CASH', portfolio.cash.shares - transaction.price, 'None', Currency.Dollars)
+        cash = Security('CASHX', portfolio.cash.shares - transaction.price, 'None', Currency.Dollars)
         return Portfolio(cash, transaction.date, new_securities, dividends=portfolio.dividends)
 
     @staticmethod
