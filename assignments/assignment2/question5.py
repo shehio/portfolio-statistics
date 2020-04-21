@@ -10,8 +10,8 @@ def prod(iterable):
     return reduce(operator.mul, iterable, 1)
 
 
-def normalize_returns(_nominal_returns, _inflation_rate):
-    return ((1 + _nominal_returns) / (1 + _inflation_rate)) - 1
+def normalize_returns(_nominal_returns_percentage, _inflation_rate_percentage):
+    return ((1 + _nominal_returns_percentage) / (1 + _inflation_rate_percentage)) - 1
 
 
 # Q5
@@ -45,7 +45,7 @@ print()
 # b. Calculate the real returns of the portfolio for years 2008 – 2013.
 real_returns = np.array([])
 for (nominal_return, inflation_rate) in zip(nominal_returns, inflation_rates):
-    real_returns = np.append(real_returns, normalize_returns(nominal_return, inflation_rate))
+    real_returns = np.append(real_returns, normalize_returns(nominal_return / 100, inflation_rate / 100))
 
 print('(b)')
 print(f'Nominal Returns     Real Returns')
@@ -58,25 +58,24 @@ for (nominal_return, real_return) in zip(nominal_returns, real_returns):
 # a. the cumulative return;
 print('Q6')
 print('(a)')
-cumulative_return = prod(map(lambda _real_return: 1 + _real_return / 100.0, real_returns)) - 1
+cumulative_return = prod(map(lambda _nominal_return: 1 + _nominal_return / 100.0, nominal_returns)) - 1
 print(f'Cumulative Return: {cumulative_return}')
 
-
 # b. the arithmetic mean rate of return;
-arithmetic_return = sum(map(lambda _real_return: _real_return, real_returns)) / real_returns.shape[0]
+arithmetic_return = sum(map(lambda _nominal_return: _nominal_return, nominal_returns)) / nominal_returns.shape[0]
 print('(b)')
 print(f'Arithmetic Mean Rate Of Return: {arithmetic_return}')
 
 # c. the geometric mean rate of return;
 print('(c)')
 geometric_return = (np.float_power(
-    prod(map(lambda _real_return: 1 + _real_return / 100.0, real_returns)),
-    1.0 / real_returns.shape[0]) - 1) * 100
+    prod(map(lambda _nominal_return: 1 + _nominal_return / 100.0, nominal_returns)),
+    1.0 / nominal_returns.shape[0]) - 1) * 100
 print(f'Geometric Mean Rate Of Return: {geometric_return}')
 
 # d. the geometric mean rate of return based on the approximation involving the arithmetic mean
 # and the standard deviation.
 print('(d)')
-s2 = 1 / (real_returns.shape[0] - 1) * sum(map(lambda r: (r / 100 - arithmetic_return / 100) ** 2, real_returns))
+s2 = 1 / (nominal_returns.shape[0] - 1) * sum(map(lambda r: (r / 100 - arithmetic_return / 100) ** 2, nominal_returns))
 approximated_geometric_return = (arithmetic_return / 100 - (1.0 / 2) * s2) * 100
 print(f'Approximated Geometric Mean Rate Of Return: {approximated_geometric_return}')
