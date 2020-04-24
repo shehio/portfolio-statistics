@@ -236,7 +236,7 @@ weekly_fees = np.append(weekly_fees, weekly_fee)
 portfolio_cash_before_fee = new_portfolio.cash.shares
 new_portfolio.discount_fee(weekly_fee)
 myprint([f'The cash before discounting the fee is: {portfolio_cash_before_fee}',
-         f'The weekly fee on: {assignment2_end_date} is: {weekly_fee},'
+         f'The weekly fee on: {assignment2_end_date} is: {weekly_fee}, '
          f'cash in portfolio afterwards: {new_portfolio.cash}'])
 
 week3_transaction_cost = 0
@@ -272,7 +272,7 @@ fourth_total_return = fourth_income_return + fourth_price_return
 IoHelpers.write_account_summary(
     account_name='yassers',
     dates=[start_date, assignment1_end_date, assignment2_end_date, assignment3_end_date],
-    deposits=[that_initial_balance, 0, 0, 100_000],
+    deposits=[that_initial_balance, 0, 100_000, 0],
     withdrawals=[0, 0, 0, 0],
     dividends=dividends_collection,
     fees=weekly_fees,
@@ -292,7 +292,7 @@ IoHelpers.write_account_summary(
 # a. The time-weighted rate of return
 # b.The money-weighted rate of return. With your solution, show the equation that the rate must satisfy.
 print('Q4: Time-Weighted Returns vs Money-Weighted Returns.')
-week1_return = portfolio_value_by_the_end_of_week_1 / that_initial_balance
+week1_return = portfolio_value_by_the_end_of_week_1 / portfolio_value_by_the_end_of_week_0
 week2_return = portfolio_value_by_the_end_of_week_2 / portfolio_value_by_the_end_of_week_1
 week3_return = (portfolio_value_by_the_end_of_week_3 - week3_cash_infusion) / portfolio_value_by_the_end_of_week_2
 time_weighted_rate_of_return = week3_return * week2_return * week1_return - 1
@@ -300,7 +300,7 @@ time_weighted_rate_of_return = week3_return * week2_return * week1_return - 1
 r = sympy.symbols('r', real=True)
 equation = sympy.Eq(
     portfolio_value_by_the_end_of_week_3,
-    that_initial_balance * (1 + r) + week3_cash_infusion * ((1 + r) ** (7 / 21)))
+    portfolio_value_by_the_end_of_week_0 * (1 + r) + week3_cash_infusion * ((1 + r) ** (7 / 21)))
 internal_rate_of_return = money_weighted_rate_of_return = sympy.solve(equation)
 print(f'All values from solve: {internal_rate_of_return}')
 myprint([f'Time-Weighted rate of return = {time_weighted_rate_of_return}',
@@ -316,7 +316,7 @@ simple_dietz_return = \
 # b. Calculate a return using the modified (day-weighted) Dietz formula.
 modified_dietz_return = \
     (portfolio_value_by_the_end_of_week_3 - portfolio_value_by_the_end_of_week_1 - week3_cash_infusion) / \
-    (portfolio_value_by_the_end_of_week_1 + week3_cash_infusion * 7 / 21)
+    (portfolio_value_by_the_end_of_week_1 + week3_cash_infusion * 8 / 14)
 
 # c. Calculate the internal rate of return.
 equation = sympy.Eq(
@@ -326,8 +326,8 @@ money_weighted_rate_of_return_for_weeks_1_3 = sympy.solve(equation)
 print(f'All values from solve: {money_weighted_rate_of_return_for_weeks_1_3}')
 
 # d. For comparison, also calculate the true time-weighted return, using the 9 April valuation.
-week2_return = portfolio_value_by_the_end_of_week_2 / portfolio_value_by_the_end_of_week_1
-week3_return = (portfolio_value_by_the_end_of_week_3 - week3_cash_infusion) / portfolio_value_by_the_end_of_week_2
+week2_return = (portfolio_value_by_the_end_of_week_2 - week3_cash_infusion) / portfolio_value_by_the_end_of_week_1
+week3_return = portfolio_value_by_the_end_of_week_3 / portfolio_value_by_the_end_of_week_2
 true_time_weighted_rate_of_return = week3_return * week2_return * week1_return - 1
 
 myprint(['Q5',
@@ -344,8 +344,9 @@ myprint(['Q5',
 week_3_1_simple_dietz_return = \
     (portfolio_value_by_the_end_of_week_3 - portfolio_value_by_the_end_of_week_1 - week3_cash_infusion) / \
     (portfolio_value_by_the_end_of_week_1 + week3_cash_infusion / 2)
-week1_simple_dietz_return = (portfolio_value_by_the_end_of_week_1 - that_initial_balance) / that_initial_balance
-linked_simple_dietz_return = (1 + week1_simple_dietz_return) * (1 + week_3_1_simple_dietz_return) - 1  # Do we need to weight them?
+week1_simple_dietz_return = (portfolio_value_by_the_end_of_week_1 - portfolio_value_by_the_end_of_week_0) / \
+                            portfolio_value_by_the_end_of_week_0
+linked_simple_dietz_return = (1 + week1_simple_dietz_return) * (1 + week_3_1_simple_dietz_return) - 1
 
 # b. Calculate a return using the linked modified Dietz method.
 week_3_1_modified_dietz_return = \
@@ -371,7 +372,7 @@ linked_money_weighted_rate_of_return = (1 + irr_1[0]) * (1 + irr_3[1]) - 1
 
 # d. For comparison, also calculate the true time-weighted return, using the 9 April valuation.
 # Calculated already from Question 5.
-week1_return = portfolio_value_by_the_end_of_week_1 / that_initial_balance
+week1_return = portfolio_value_by_the_end_of_week_1 / portfolio_value_by_the_end_of_week_0
 week2_return = portfolio_value_by_the_end_of_week_2 / portfolio_value_by_the_end_of_week_1
 week3_return = (portfolio_value_by_the_end_of_week_3 - week3_cash_infusion) / portfolio_value_by_the_end_of_week_2
 true_time_weighted_rate_of_return = week3_return * week2_return * week1_return - 1
