@@ -1,5 +1,6 @@
 from .portfolio import Portfolio
 
+import csv
 import datetime
 
 
@@ -7,29 +8,46 @@ class IoHelpers:
 
     @staticmethod
     def write_holdings(account_name: str, portfolio: Portfolio, date: datetime):
-        csv = 'ticker,num.shares\n'
+        _csv = 'ticker,num.shares\n'
         for security in portfolio.securities:
-            csv += f'{security.ticker},{security.shares}\n'
-        csv += f'{portfolio.cash.ticker},{portfolio.cash.shares}'
+            _csv += f'{security.ticker},{security.shares}\n'
+        _csv += f'{portfolio.cash.ticker},{portfolio.cash.shares}'
 
         text_file = open(f'./statements/H-{account_name}-{date}.csv', 'w')
-        text_file.write(csv)
+        text_file.write(_csv)
         text_file.close()
 
     @staticmethod
     def write_account_summary(
             account_name, dates, deposits, withdrawals, dividends, fees,
             transactional_costs, values, income_returns, price_returns, total_returns):
-        csv = 'account.name,as.of.date,deposits,withdrawals,' \
+        _csv = 'account.name,as.of.date,deposits,withdrawals,' \
               'dividends,fees,tc,value,income.return,price.return,total.return\n'
 
         for date, deposit, withdrawal, dividend, fee, transactional_cost,\
             value, income_return, price_return, total_return in zip(dates, deposits, withdrawals, dividends,
                                                                     fees, transactional_costs, values, income_returns,
                                                                     price_returns, total_returns):
-            csv += f'{account_name},{date},{deposit},{withdrawal},{dividend},' \
+            _csv += f'{account_name},{date},{deposit},{withdrawal},{dividend},' \
                    f'{fee},{transactional_cost},{value},{income_return},{price_return},{total_return}\n'
 
         text_file = open(f'./statements/A-{account_name}-{dates[len(dates) - 1]}.csv', 'w')
-        text_file.write(csv)
+        text_file.write(_csv)
         text_file.close()
+
+    @staticmethod
+    def get_sector_dict_from_russel_holdings():
+        holdings = IoHelpers.read_csv('./../statements/H-R3000-2020-03-27.csv')
+        next(holdings)  # throwing the fields away.
+        holdings_dict = {}
+        for holding in holdings:
+            name = holding[18]
+            sector_id = holding[19]
+            sector_name = holding[20]
+            holdings_dict[name] = (sector_id, sector_name)
+
+        return holdings_dict
+
+    @staticmethod
+    def read_csv(file_name: str):  # This is not implemented properly.
+        return csv.reader(open(file_name))
