@@ -1,12 +1,9 @@
-from src.apihelpers import ApiHelpers
 from src.currency import Currency
 from src.iohelpers import IoHelpers
-from src.portfolio import Portfolio
 from src.portfoliohelpers import PortfolioHelpers
 from src.portfoliohelpers import FeeFrequency
 from src.security import Security
 from src.transaction import Transaction
-from src.transactionshistory import TransactionsHistory
 
 from assignments.assignment_helpers import Helpers
 
@@ -48,11 +45,6 @@ IoHelpers.write_holdings('yassers', portfolio, start_date)
 # Q2: Calculate the return of the transition period (prior to inception) based on the beginning value of $1 million.
 portfolio_value_by_the_end_of_week_0 = portfolio.get_value(start_date)
 first_income_return, first_price_return, first_total_return = Helpers.get_returns(portfolio, that_initial_balance, start_date)
-# portfolio_value_by_the_end_of_week_0 = portfolio.get_value(start_date)
-# first_income_return = 0
-# first_price_return = first_total_return = Helpers.get_price_return(
-#     value_before=that_initial_balance,
-#     value_after=portfolio_value_by_the_end_of_week_0)
 Helpers.myprint([f'Total Return = Price Return = {first_total_return}, since dividends are all zero.'])
 
 # Q3: Check your stocks for any splits
@@ -88,13 +80,8 @@ print(new_portfolio.__repr__())
 
 # Q7:
 portfolio_value_by_the_end_of_week_1 = new_portfolio.get_value(assignment1_end_date)
-second_income_return = Helpers.get_div_return(
-    value_before=portfolio_value_by_the_end_of_week_0,
-    value_after=new_portfolio.dividends)
-second_price_return = Helpers.get_price_return(
-    value_before=portfolio_value_by_the_end_of_week_0,
-    value_after=portfolio_value_by_the_end_of_week_1 - new_portfolio.dividends)
-second_total_return = second_price_return + second_income_return
+second_income_return, second_price_return, second_total_return = Helpers.get_returns(new_portfolio, portfolio_value_by_the_end_of_week_0, assignment1_end_date)
+
 Helpers.myprint([f'Second Income Return = {second_income_return}',
          f'Second Price Return = {second_price_return}',
          f'Second Total Return = {second_total_return}'])
@@ -116,13 +103,8 @@ Helpers.myprint([f'The cash before discounting the fee is: {portfolio_cash_befor
          f'The weekly fee on: {weekly_fee_date} is: {weekly_fee}, cash in portfolio afterwards: {new_portfolio.cash}'])
 
 portfolio_value_by_the_end_of_week_2 = new_portfolio.get_value(assignment2_end_date)
-third_income_return = Helpers.get_div_return(
-    value_before=portfolio_value_by_the_end_of_week_1,
-    value_after=new_portfolio.dividends)
-third_price_return = Helpers.get_price_return(
-    value_before=portfolio_value_by_the_end_of_week_1,
-    value_after=portfolio_value_by_the_end_of_week_2 - new_portfolio.dividends)
-third_total_return = third_price_return + third_income_return
+third_income_return, third_price_return, third_total_return = Helpers.get_returns(new_portfolio, portfolio_value_by_the_end_of_week_1, assignment2_end_date)
+
 Helpers.myprint([f'Third Income Return = {third_income_return}',
          f'Third Price Return = {third_price_return}',
          f'Third Total Return = {third_total_return}'])
@@ -193,7 +175,6 @@ IoHelpers.write_holdings('yassers', new_portfolio, assignment2_end_date)
 print('Q2: Adjusting for dividends, splits, management fees, ....')
 new_portfolio = PortfolioHelpers.collect_dividends_if_any(new_portfolio, assignment2_end_date, assignment3_end_date)
 dividends_collection = np.append(dividends_collection, new_portfolio.dividends)
-
 new_portfolio = PortfolioHelpers.get_portfolio_after_splits(new_portfolio, assignment2_end_date, assignment3_end_date)
 
 weekly_fee = PortfolioHelpers.get_fee(new_portfolio, annual_fee, FeeFrequency.weekly, assignment2_end_date)
@@ -227,13 +208,8 @@ IoHelpers.write_holdings('yassers', new_portfolio, assignment3_end_date)
 # account summary text file for the four end-of-week dates through 2020-04-17.
 print('Q3: Writing account summary.')
 portfolio_value_by_the_end_of_week_3 = new_portfolio.get_value(assignment3_end_date)
-fourth_income_return = Helpers.get_div_return(
-    value_before=portfolio_value_by_the_end_of_week_2,
-    value_after=new_portfolio.dividends)
-fourth_price_return = Helpers.get_price_return(
-    value_before=portfolio_value_by_the_end_of_week_2,
-    value_after=portfolio_value_by_the_end_of_week_3 - new_portfolio.dividends)
-fourth_total_return = fourth_income_return + fourth_price_return
+
+fourth_income_return, fourth_price_return, fourth_total_return = Helpers.get_returns(new_portfolio, portfolio_value_by_the_end_of_week_2, assignment3_end_date)
 
 IoHelpers.write_account_summary(
     account_name='yassers',
