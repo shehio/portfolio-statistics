@@ -11,11 +11,10 @@ def get_sectors_from_holdings(_holdings: dict, _sectors_map: dict):
         if key == 'CASHX':
             continue
 
-        sector = _sectors_map[key].id
+        sector = _sectors_map[key]
 
         if sector in portfolio_sectors.keys():
-            array = portfolio_sectors[sector]
-            array = np.append(array, key)
+            array = np.append(portfolio_sectors[sector], key)
         else:
             array = np.array([key])
 
@@ -96,16 +95,5 @@ for i in range(0, len(dates) - 1):
         weights_per_sectors_list,
         get_weight_by_sector(money_by_sector2))
 
-IoHelpers.write_s_file(dates, returns_per_sectors_list, weights_per_sectors_list)
-
-
-# for holdings_file, date in zip(holdings_files, dates):
-#     holdings = IoHelpers.get_securities_from_holdings_file(f'./../statements/{holdings_file}')
-#     print(get_sectors_from_holdings(holdings.keys(), sectors_map))
-#     sectors_from_holdings = get_sectors_from_holdings(holdings, sectors_map)
-#     money_in_each_sector = get_money_in_each_sector(sectors_from_holdings, holdings, date)
-#     portfolio_value = sum(money_in_each_sector.values())
-#     print(dict(map(lambda entry: (entry[0], entry[1] / portfolio_value), money_in_each_sector.items())))
-
-
-
+dates.pop(0)
+IoHelpers.write_s_file(dates, weights_per_sectors_list, returns_per_sectors_list)
