@@ -41,10 +41,20 @@ class IoHelpers:
         next(holdings)  # throwing the fields away.
         holdings_dict = {}
         for holding in holdings:
-            name = holding[18]
+            name = holding[3]
             sector_id = holding[19]
             sector_name = holding[20]
             holdings_dict[name] = (sector_id, sector_name)
+
+        return holdings_dict
+
+    @staticmethod  # No fractional stocks allowed.
+    def get_securities_from_holdings_file(file_name: str):
+        holdings = IoHelpers.read_csv(file_name)
+        next(holdings)  # throwing the fields away.
+        holdings_dict = {}
+        for holding in holdings:
+            holdings_dict[holding[0]] = int(float(holding[1]))
 
         return holdings_dict
 
