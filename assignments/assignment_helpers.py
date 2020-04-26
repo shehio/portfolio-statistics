@@ -43,6 +43,7 @@ class Helpers:
             securities = np.append(securities, _security)
 
             _transaction = Transaction(inception_date, _security, shares, broker_transaction_cost, Currency.Dollars)
+            transactions_history.push_transaction(_transaction)
 
         total_transaction_cost = sum(map(
             lambda _transaction: _transaction.price,
@@ -64,3 +65,16 @@ class Helpers:
         _transaction = Transaction(_trade_date, _security, 10, _broker_transaction_cost, Currency.Dollars)
         _transaction_cost += _transaction.transaction_cost
         return PortfolioHelpers.make_trade(_new_portfolio, _security, _transaction), _transaction_cost
+
+    @staticmethod
+    def get_returns(portfolio, calculation_date, total_value_last_week):
+        portfolio_value_by_the_end_of_this_week = portfolio.get_value(calculation_date)
+        income_return = Helpers.get_div_return(
+            value_before=total_value_last_week,
+            value_after=portfolio.dividends)
+        price_return = Helpers.get_price_return(
+            value_before=total_value_last_week,
+            value_after=portfolio_value_by_the_end_of_this_week - portfolio.dividends)
+        total_return = income_return + price_return
+
+        return income_return, price_return, total_return

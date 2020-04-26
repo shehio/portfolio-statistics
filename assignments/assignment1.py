@@ -14,29 +14,6 @@ import datetime
 import numpy as np
 import sympy
 
-
-def establish_portfolio(initial_balance, inception_date, tickers, transaction_cost):
-    equal_percentage = 1.0 / len(tickers)
-    transactions_history = TransactionsHistory()
-    securities = np.array([], dtype=Security)
-    for ticker in tickers:
-        security_price = ApiHelpers.get_close_price(ticker, inception_date)
-        shares = np.floor(initial_balance * equal_percentage / security_price)
-
-        _security = Security(ticker, shares, 'NASDAQ', Currency.Dollars)
-        securities = np.append(securities, _security)
-
-        _transaction = Transaction(inception_date, _security, shares, transaction_cost, Currency.Dollars)
-        transactions_history.push_transaction(_transaction)
-
-    total_transaction_cost = sum(map(
-        lambda _transaction: _transaction.price,
-        transactions_history.transactions))
-    current_balance = initial_balance - total_transaction_cost
-    current_balance = Security('CASHX', current_balance, 'None', Currency.Dollars)
-    return Portfolio(current_balance, inception_date, securities, transactions_history), total_transaction_cost
-
-
 security_count = 20
 maximum_security_weight = 0.2
 maximum_cash_weight = 0.05
@@ -57,7 +34,7 @@ weekly_fees = np.array([0])
 dividends_collection = np.array([0])
 
 # Q0
-portfolio, week0_transaction_cost = establish_portfolio(
+portfolio, week0_transaction_cost = Helpers.establish_equal_weight_portfolio(
     that_initial_balance,
     start_date,
     current_tickers,
