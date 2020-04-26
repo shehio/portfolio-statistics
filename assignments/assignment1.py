@@ -47,10 +47,12 @@ IoHelpers.write_holdings('yassers', portfolio, start_date)
 
 # Q2: Calculate the return of the transition period (prior to inception) based on the beginning value of $1 million.
 portfolio_value_by_the_end_of_week_0 = portfolio.get_value(start_date)
-first_income_return = 0
-first_price_return = first_total_return = Helpers.get_price_return(
-    value_before=that_initial_balance,
-    value_after=portfolio_value_by_the_end_of_week_0)
+first_income_return, first_price_return, first_total_return = Helpers.get_returns(portfolio, that_initial_balance, start_date)
+# portfolio_value_by_the_end_of_week_0 = portfolio.get_value(start_date)
+# first_income_return = 0
+# first_price_return = first_total_return = Helpers.get_price_return(
+#     value_before=that_initial_balance,
+#     value_after=portfolio_value_by_the_end_of_week_0)
 Helpers.myprint([f'Total Return = Price Return = {first_total_return}, since dividends are all zero.'])
 
 # Q3: Check your stocks for any splits

@@ -67,14 +67,14 @@ class Helpers:
         return PortfolioHelpers.make_trade(_new_portfolio, _security, _transaction), _transaction_cost
 
     @staticmethod
-    def get_returns(portfolio, calculation_date, total_value_last_week):
-        portfolio_value_by_the_end_of_this_week = portfolio.get_value(calculation_date)
+    def get_returns(portfolio, total_value_last_week, calculation_date):
+        portfolio_value_this_week = portfolio.get_value(calculation_date)
         income_return = Helpers.get_div_return(
             value_before=total_value_last_week,
             value_after=portfolio.dividends)
         price_return = Helpers.get_price_return(
             value_before=total_value_last_week,
-            value_after=portfolio_value_by_the_end_of_this_week - portfolio.dividends)
+            value_after=portfolio_value_this_week - portfolio.dividends)
         total_return = income_return + price_return
 
         return income_return, price_return, total_return
