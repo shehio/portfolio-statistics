@@ -1,4 +1,5 @@
 from .portfolio import Portfolio
+from .sector import Sector
 from .security import Security
 
 import csv
@@ -16,32 +17,36 @@ class IoHelpers:
     def write_holdings(account_name: str, portfolio: Portfolio, date: datetime):
         sorted_securities = np.sort(portfolio.securities)
 
-        _csv = 'ticker,num.shares\n'
+        content = 'ticker,num.shares\n'
         for security in sorted_securities:
-            _csv += f'{security.ticker},{security.shares}\n'
-        _csv += f'{portfolio.cash.ticker},{portfolio.cash.shares}'
+            content += f'{security.ticker},{security.shares}\n'
+        content += f'{portfolio.cash.ticker},{portfolio.cash.shares}'
 
         text_file = open(f'./statements/H-{account_name}-{date}.csv', 'w')
-        text_file.write(_csv)
+        text_file.write(content)
         text_file.close()
 
     @staticmethod
     def write_account_summary(
             account_name, dates, deposits, withdrawals, dividends, fees,
             transactional_costs, values, income_returns, price_returns, total_returns):
-        _csv = 'account.name,as.of.date,deposits,withdrawals,' \
+        content = 'account.name,as.of.date,deposits,withdrawals,' \
               'dividends,fees,tc,value,income.return,price.return,total.return\n'
 
         for date, deposit, withdrawal, dividend, fee, transactional_cost,\
             value, income_return, price_return, total_return in zip(dates, deposits, withdrawals, dividends,
                                                                     fees, transactional_costs, values, income_returns,
                                                                     price_returns, total_returns):
-            _csv += f'{account_name},{date},{deposit},{withdrawal},{dividend},' \
+            content += f'{account_name},{date},{deposit},{withdrawal},{dividend},' \
                    f'{fee},{transactional_cost},{value},{income_return},{price_return},{total_return}\n'
 
         text_file = open(f'./statements/A-{account_name}-{dates[len(dates) - 1]}.csv', 'w')
-        text_file.write(_csv)
+        text_file.write(content)
         text_file.close()
+    
+    @staticmethod
+    def write_s_file(week_endings, weights_by_sector, returns_by_sector):
+        content = 'week.ending, ICB.industry.num, ICB.industry.name, weight, "return'
 
     @staticmethod
     def get_sector_dict_from_russel_holdings():
@@ -52,7 +57,7 @@ class IoHelpers:
             name = holding[3]
             sector_id = holding[19]
             sector_name = holding[20]
-            holdings_dict[name] = (sector_id, sector_name)
+            holdings_dict[name] = Sector(sector_id, sector_name)
 
         return holdings_dict
 
