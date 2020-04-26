@@ -8,24 +8,11 @@ from src.security import Security
 from src.transaction import Transaction
 from src.transactionshistory import TransactionsHistory
 
+from assignments.assignment_helpers import Helpers
+
 import datetime
 import numpy as np
 import sympy
-
-
-def get_div_return(value_before, value_after):
-    return (value_after / value_before) * 100
-
-
-def get_price_return(value_before, value_after):
-    return (value_after / value_before - 1) * 100
-
-
-def myprint(strings):
-    print()
-    for string in strings:
-        print(string)
-    print()
 
 
 def establish_portfolio(initial_balance, inception_date, tickers, transaction_cost):
@@ -75,19 +62,19 @@ portfolio, week0_transaction_cost = establish_portfolio(
     start_date,
     current_tickers,
     broker_transaction_cost)
-myprint([portfolio.__repr__()])
+Helpers.myprint([portfolio.__repr__()])
 
 # Q1: Calculate the total value of the portfolio after the trades.
-myprint([f'The portfolios worth after making the initial transactions: {portfolio.get_value(start_date)}'])
+Helpers.myprint([f'The portfolios worth after making the initial transactions: {portfolio.get_value(start_date)}'])
 IoHelpers.write_holdings('yassers', portfolio, start_date)
 
 # Q2: Calculate the return of the transition period (prior to inception) based on the beginning value of $1 million.
 portfolio_value_by_the_end_of_week_0 = portfolio.get_value(start_date)
 first_income_return = 0
-first_price_return = first_total_return = get_price_return(
+first_price_return = first_total_return = Helpers.get_price_return(
     value_before=that_initial_balance,
     value_after=portfolio_value_by_the_end_of_week_0)
-myprint([f'Total Return = Price Return = {first_total_return}, since dividends are all zero.'])
+Helpers.myprint([f'Total Return = Price Return = {first_total_return}, since dividends are all zero.'])
 
 # Q3: Check your stocks for any splits
 new_portfolio = PortfolioHelpers.get_portfolio_after_splits(portfolio, start_date, assignment1_end_date)
@@ -102,7 +89,7 @@ weekly_fees = np.append(weekly_fees, weekly_fee)
 
 portfolio_cash_before_fee = new_portfolio.cash.shares
 new_portfolio.discount_fee(weekly_fee)
-myprint([f'The cash before discounting the fee is: {portfolio_cash_before_fee}',
+Helpers.myprint([f'The cash before discounting the fee is: {portfolio_cash_before_fee}',
          f'The weekly fee on: {weekly_fee_date} is: {weekly_fee}, cash in portfolio afterwards: {new_portfolio.cash}'])
 
 # Q6: Make a trade.  # Eliminate the repeatability here.
@@ -122,14 +109,14 @@ print(new_portfolio.__repr__())
 
 # Q7:
 portfolio_value_by_the_end_of_week_1 = new_portfolio.get_value(assignment1_end_date)
-second_income_return = get_div_return(
+second_income_return = Helpers.get_div_return(
     value_before=portfolio_value_by_the_end_of_week_0,
     value_after=new_portfolio.dividends)
-second_price_return = get_price_return(
+second_price_return = Helpers.get_price_return(
     value_before=portfolio_value_by_the_end_of_week_0,
     value_after=portfolio_value_by_the_end_of_week_1 - new_portfolio.dividends)
 second_total_return = second_price_return + second_income_return
-myprint([f'Second Income Return = {second_income_return}',
+Helpers.myprint([f'Second Income Return = {second_income_return}',
          f'Second Price Return = {second_price_return}',
          f'Second Total Return = {second_total_return}'])
 
@@ -146,18 +133,18 @@ weekly_fees = np.append(weekly_fees, weekly_fee)
 
 portfolio_cash_before_fee = new_portfolio.cash.shares
 new_portfolio.discount_fee(weekly_fee)
-myprint([f'The cash before discounting the fee is: {portfolio_cash_before_fee}',
+Helpers.myprint([f'The cash before discounting the fee is: {portfolio_cash_before_fee}',
          f'The weekly fee on: {weekly_fee_date} is: {weekly_fee}, cash in portfolio afterwards: {new_portfolio.cash}'])
 
 portfolio_value_by_the_end_of_week_2 = new_portfolio.get_value(assignment2_end_date)
-third_income_return = get_div_return(
+third_income_return = Helpers.get_div_return(
     value_before=portfolio_value_by_the_end_of_week_1,
     value_after=new_portfolio.dividends)
-third_price_return = get_price_return(
+third_price_return = Helpers.get_price_return(
     value_before=portfolio_value_by_the_end_of_week_1,
     value_after=portfolio_value_by_the_end_of_week_2 - new_portfolio.dividends)
 third_total_return = third_price_return + third_income_return
-myprint([f'Third Income Return = {third_income_return}',
+Helpers.myprint([f'Third Income Return = {third_income_return}',
          f'Third Price Return = {third_price_return}',
          f'Third Total Return = {third_total_return}'])
 
@@ -170,17 +157,17 @@ dividends_collection = np.append(dividends_collection, new_portfolio.dividends)
 # Reminder: the inception of the portfolio measurement period is the market close on 27
 # March 2020.
 assignment2_portfolio_value = new_portfolio.get_value(assignment2_end_date)
-net_of_fees_returns = get_price_return(
+net_of_fees_returns = Helpers.get_price_return(
     value_before=portfolio_value_by_the_end_of_week_0,
     value_after=portfolio_value_by_the_end_of_week_2)
-myprint([f'Net of fees returns = {net_of_fees_returns}'])
+Helpers.myprint([f'Net of fees returns = {net_of_fees_returns}'])
 
 # b. Calculate an approximate gross-of-fees return from inception to this date. Describe any assumptions used.
 assignment2_portfolio_value = new_portfolio.get_value(assignment2_end_date)
-gross_of_fees_returns = get_price_return(
+gross_of_fees_returns = Helpers.get_price_return(
     value_before=portfolio_value_by_the_end_of_week_0,
     value_after=portfolio_value_by_the_end_of_week_2 + + sum(map(lambda fee: fee, weekly_fees)))
-myprint([f'Gross of fees returns = {gross_of_fees_returns}'])
+Helpers.myprint([f'Gross of fees returns = {gross_of_fees_returns}'])
 
 # c. Assuming the portfolio is liquidated on 10 April 2020, calculate the post-tax post redemption
 # return from inception to this date.Assume an income tax rate of 15% for both
@@ -194,7 +181,7 @@ assignment2_post_tax_portfolio_value = \
         capital_gain_tax_rate=0.15,
         dividends_tax_rate=0.15)
 
-myprint([f'The pre-tax value of the portfolio: {assignment2_portfolio_value}',
+Helpers.myprint([f'The pre-tax value of the portfolio: {assignment2_portfolio_value}',
          f'The post-tax value of the portfolio: {assignment2_post_tax_portfolio_value}'])
 
 # Assignment 3:
@@ -235,7 +222,7 @@ weekly_fees = np.append(weekly_fees, weekly_fee)
 
 portfolio_cash_before_fee = new_portfolio.cash.shares
 new_portfolio.discount_fee(weekly_fee)
-myprint([f'The cash before discounting the fee is: {portfolio_cash_before_fee}',
+Helpers.myprint([f'The cash before discounting the fee is: {portfolio_cash_before_fee}',
          f'The weekly fee on: {assignment2_end_date} is: {weekly_fee}, '
          f'cash in portfolio afterwards: {new_portfolio.cash}'])
 
@@ -261,10 +248,10 @@ IoHelpers.write_holdings('yassers', new_portfolio, assignment3_end_date)
 # account summary text file for the four end-of-week dates through 2020-04-17.
 print('Q3: Writing account summary.')
 portfolio_value_by_the_end_of_week_3 = new_portfolio.get_value(assignment3_end_date)
-fourth_income_return = get_div_return(
+fourth_income_return = Helpers.get_div_return(
     value_before=portfolio_value_by_the_end_of_week_2,
     value_after=new_portfolio.dividends)
-fourth_price_return = get_price_return(
+fourth_price_return = Helpers.get_price_return(
     value_before=portfolio_value_by_the_end_of_week_2,
     value_after=portfolio_value_by_the_end_of_week_3 - new_portfolio.dividends)
 fourth_total_return = fourth_income_return + fourth_price_return
@@ -303,7 +290,7 @@ equation = sympy.Eq(
     portfolio_value_by_the_end_of_week_0 * (1 + r) + week3_cash_infusion * ((1 + r) ** (7 / 21)))
 internal_rate_of_return = money_weighted_rate_of_return = sympy.solve(equation)
 print(f'All values from solve: {internal_rate_of_return}')
-myprint([f'Time-Weighted rate of return = {time_weighted_rate_of_return}',
+Helpers.myprint([f'Time-Weighted rate of return = {time_weighted_rate_of_return}',
          f'Money-Weighted rate of return = {internal_rate_of_return[0]}'])
 
 # Question 5
@@ -330,7 +317,7 @@ week2_return = (portfolio_value_by_the_end_of_week_2 - week3_cash_infusion) / po
 week3_return = portfolio_value_by_the_end_of_week_3 / portfolio_value_by_the_end_of_week_2
 true_time_weighted_rate_of_return = week3_return * week2_return * week1_return - 1
 
-myprint(['Q5',
+Helpers.myprint(['Q5',
          f'Simple Dietz return = {simple_dietz_return}',
          f'Modified Dietz rate of return = {modified_dietz_return}',
          f'Money-Weighted rate of return = {money_weighted_rate_of_return_for_weeks_1_3[0]}',
@@ -377,7 +364,7 @@ week2_return = portfolio_value_by_the_end_of_week_2 / portfolio_value_by_the_end
 week3_return = (portfolio_value_by_the_end_of_week_3 - week3_cash_infusion) / portfolio_value_by_the_end_of_week_2
 true_time_weighted_rate_of_return = week3_return * week2_return * week1_return - 1
 
-myprint(['Q6',
+Helpers.myprint(['Q6',
          f'Linked simple_dietz_return = {linked_simple_dietz_return}',
          f'Linked modified Dietz rate of return = {linked_modified_dietz_return}',
          f'Linked money-Weighted rate of return = {linked_money_weighted_rate_of_return}',
