@@ -14,7 +14,7 @@ class Portfolio:
             self,
             cash: Security,
             inception_date: datetime,
-            securities=np.array([]),
+            securities=np.array([], dtype=Security),
             transactions_history=None,
             constraints=None,
             dividends=0):

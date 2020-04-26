@@ -31,7 +31,7 @@ def myprint(strings):
 def establish_portfolio(initial_balance, inception_date, tickers, transaction_cost):
     equal_percentage = 1.0 / len(tickers)
     transactions_history = TransactionsHistory()
-    securities = np.array([])
+    securities = np.array([], dtype=Security)
     for ticker in tickers:
         security_price = ApiHelpers.get_close_price(ticker, inception_date)
         shares = np.floor(initial_balance * equal_percentage / security_price)

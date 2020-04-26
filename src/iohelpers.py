@@ -1,15 +1,23 @@
 from .portfolio import Portfolio
+from .security import Security
 
 import csv
 import datetime
+import numpy as np
+
+
+def compare_securities(security1: Security, security2: Security):
+    return security1.ticker > security2.ticker
 
 
 class IoHelpers:
 
     @staticmethod
     def write_holdings(account_name: str, portfolio: Portfolio, date: datetime):
+        sorted_securities = np.sort(portfolio.securities)
+
         _csv = 'ticker,num.shares\n'
-        for security in portfolio.securities:
+        for security in sorted_securities:
             _csv += f'{security.ticker},{security.shares}\n'
         _csv += f'{portfolio.cash.ticker},{portfolio.cash.shares}'
 

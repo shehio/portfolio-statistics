@@ -9,6 +9,9 @@ class Security:
         self.market = market
         self.home_currency = home_currency
 
+    def __lt__(self, other):  # This other can't be type-hinted as a security?
+        return self.ticker < other.ticker
+
     def __hash__(self):
         return hash((self.ticker, self.market))
 
