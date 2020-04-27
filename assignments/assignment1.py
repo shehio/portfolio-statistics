@@ -93,9 +93,9 @@ pickle.dump(second_total_return, output)
 pickle.dump(week0_transaction_cost, output)
 pickle.dump(week1_transaction_cost, output)
 
+pickle.dump(new_portfolio, output)
+
 pickle.dump(weekly_fees, output)
 pickle.dump(dividends_collection, output)
-
-pickle.dump(new_portfolio, output)
 
 output.close()

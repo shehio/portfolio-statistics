@@ -9,6 +9,7 @@ pkl_file = open('a1.pkl', 'rb')
 
 portfolio_value_by_the_end_of_week_0 = pickle.load(pkl_file)
 portfolio_value_by_the_end_of_week_1 = pickle.load(pkl_file)
+
 first_income_return = pickle.load(pkl_file)
 first_price_return = pickle.load(pkl_file)
 first_total_return = pickle.load(pkl_file)
@@ -17,15 +18,16 @@ second_income_return = pickle.load(pkl_file)
 second_price_return = pickle.load(pkl_file)
 second_total_return = pickle.load(pkl_file)
 
-weekly_fees = pickle.load(pkl_file)
-dividends_collection = pickle.load(pkl_file)
-
-new_portfolio = pickle.load(pkl_file)
-
 week0_transaction_cost = pickle.load(pkl_file)
 week1_transaction_cost = pickle.load(pkl_file)
 
+new_portfolio = pickle.load(pkl_file)
+
+weekly_fees = pickle.load(pkl_file)
+dividends_collection = pickle.load(pkl_file)
+
 pkl_file.close()
+
 
 # ### Assignment 2:
 #  Q1: Check your stocks for any splits or any dividends
@@ -96,14 +98,18 @@ Helpers.myprint([f'The pre-tax value of the portfolio: {assignment2_portfolio_va
 # Saving data
 output = open('a2.pkl', 'wb')
 
+week2_transaction_cost = 0
+
+pickle.dump(week2_transaction_cost, output)
+pickle.dump(portfolio_value_by_the_end_of_week_2, output)
+
 pickle.dump(third_income_return, output)
 pickle.dump(third_price_return, output)
 pickle.dump(third_total_return, output)
 
-pickle.dump(weekly_fees, output)
-pickle.dump(dividends_collection, output)
-
 pickle.dump(new_portfolio, output)
 
+pickle.dump(weekly_fees, output)
+pickle.dump(dividends_collection, output)
 
 output.close()

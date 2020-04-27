@@ -25,6 +25,11 @@ class Helpers:
     weekly_fee_date = datetime.date(2020, 4, 3)
     that_initial_balance = 1000 * 1000
 
+    assignment3_end_date = datetime.date(2020, 4, 17)
+    assignment2_end_date = datetime.date(2020, 4, 9)  # Market was closed on Good Friday.
+    assignment3_trade_date = datetime.date(2020, 4, 17)
+    week3_cash_infusion = 100_000
+
     @staticmethod
     def get_div_return(value_before, value_after):
         return (value_after / value_before) * 100
