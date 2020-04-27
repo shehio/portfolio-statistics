@@ -1,14 +1,21 @@
 from src.apihelpers import ApiHelpers
+from src.sector import Sector
 from src.iohelpers import IoHelpers
 
 import datetime
 import numpy as np
 
+CASHX_INDUSTRY_ID = 0
+CASHX_INDUSTRY_NAME = 'Liquidity Reserve'
+CASH_SECTOR = Sector(CASHX_INDUSTRY_ID, CASHX_INDUSTRY_NAME)
+
 
 def get_sectors_from_holdings(_holdings: dict, _sectors_map: dict):
+
     portfolio_sectors = {}
     for key in _holdings:
         if key == 'CASHX':
+            portfolio_sectors[CASH_SECTOR] = np.array([key])
             continue
 
         sector = _sectors_map[key]
@@ -34,7 +41,10 @@ def get_money_in_sector(tickers: dict, _holdings_map: dict, _date: datetime):
 def get_money_by_sector(_holdings_by_sectors, _holdings_map: dict, _date: datetime):
     money_in_sectors = {}
     for _sector in _holdings_by_sectors.keys():
-        money_in_sectors[_sector] = get_money_in_sector(_holdings_by_sectors[_sector], _holdings_map, _date)
+        if _sector.id == CASHX_INDUSTRY_ID:
+            money_in_sectors[_sector] = _holdings_map[_holdings_by_sectors[_sector][0]]
+        else:
+            money_in_sectors[_sector] = get_money_in_sector(_holdings_by_sectors[_sector], _holdings_map, _date)
 
     return money_in_sectors
 
@@ -68,13 +78,15 @@ holdings_files = [
     'H-yassers-2020-03-27.csv',
     'H-yassers-2020-04-03.csv',
     'H-yassers-2020-04-09.csv',
-    'H-yassers-2020-04-17.csv']
+    'H-yassers-2020-04-17.csv',
+    'H-yassers-2020-04-24.csv']
 
 dates = [
     datetime.date(2020, 3, 27),
     datetime.date(2020, 4, 3),
     datetime.date(2020, 4, 9),
-    datetime.date(2020, 4, 17)
+    datetime.date(2020, 4, 17),
+    datetime.date(2020, 4, 24)
 ]
 
 returns_per_sectors_list = np.array([], dtype=dict)

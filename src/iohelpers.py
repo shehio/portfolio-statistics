@@ -44,7 +44,8 @@ class IoHelpers:
         content = 'week.ending, ICB.industry.num, ICB.industry.name, weight, return\n'
         for (date, weights_dict, returns_dict) in zip(week_endings, weights_by_sector_list, returns_by_sector_list):
             for sector in weights_dict.keys():
-                content += f'{date},{sector.id},{sector.name},{weights_dict[sector]},{returns_dict[sector]}\n'
+                content += f'{date},{sector.id},{sector.name},' \
+                           f'{weights_dict[sector] * 100},{returns_dict[sector] * 100}\n'
 
         csv_file = open(f'./../statements/S-yassers-{week_endings[len(week_endings) - 1]}.csv', 'w')
         csv_file.write(content)
