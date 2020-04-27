@@ -75,26 +75,16 @@ Helpers.myprint([f'Second Income Return = {second_income_return}',
                  f'Second Price Return = {second_price_return}',
                  f'Second Total Return = {second_total_return}'])
 
+portfolio_values = np.array([portfolio_value_by_the_end_of_week_0, portfolio_value_by_the_end_of_week_1])
+
 income_returns = np.array([first_income_return, second_income_return])
 price_returns = np.array([first_price_return, second_price_return])
 total_returns = np.array([first_total_return, second_total_return])
 
+transaction_costs = np.array([week0_transaction_cost, week1_transaction_cost])
+
 # Saving data
-output = open('a1.pkl', 'wb')
 
-pickle.dump(portfolio_value_by_the_end_of_week_0, output)
-pickle.dump(portfolio_value_by_the_end_of_week_1, output)
-
-pickle.dump(income_returns, output)
-pickle.dump(price_returns, output)
-pickle.dump(total_returns, output)
-
-pickle.dump(week0_transaction_cost, output)
-pickle.dump(week1_transaction_cost, output)
-
-pickle.dump(new_portfolio, output)
-
-pickle.dump(weekly_fees, output)
-pickle.dump(dividends_collection, output)
-
-output.close()
+collection = np.array([income_returns, price_returns, total_returns, new_portfolio,
+                       portfolio_values, transaction_costs, weekly_fees, dividends_collection])
+Helpers.save_to_pickle(collection, 'a1.pkl')

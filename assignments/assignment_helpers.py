@@ -9,6 +9,7 @@ from src.transactionshistory import TransactionsHistory
 
 import datetime
 import numpy as np
+import pickle
 
 
 class Helpers:
@@ -98,3 +99,45 @@ class Helpers:
         total_return = income_return + price_return
 
         return income_return, price_return, total_return
+
+    @staticmethod
+    def load_vars_from_pickle(file):
+        pkl_file = open(file, 'rb')
+
+        income_returns = pickle.load(pkl_file)
+        price_returns = pickle.load(pkl_file)
+        total_returns = pickle.load(pkl_file)
+
+        new_portfolio = pickle.load(pkl_file)
+
+        portfolio_values = pickle.load(pkl_file)
+        transaction_costs = pickle.load(pkl_file)
+
+        weekly_fees = pickle.load(pkl_file)
+        dividends_collection = pickle.load(pkl_file)
+
+        pkl_file.close()
+
+        return income_returns, price_returns, total_returns, new_portfolio, portfolio_values, transaction_costs,\
+               weekly_fees, dividends_collection
+
+    @staticmethod
+    def save_to_pickle(collection, file):
+
+        output = open(file, 'wb')
+
+        for var in collection:
+            pickle.dump(var, output)
+        # pickle.dump(income_returns, output)
+        # pickle.dump(price_returns, output)
+        # pickle.dump(total_returns, output)
+        #
+        # pickle.dump(new_portfolio, output)
+        #
+        # pickle.dump(portfolio_values, output)
+        # pickle.dump(transaction_costs, output)
+        #
+        # pickle.dump(weekly_fees, output)
+        # pickle.dump(dividends_collection, output)
+
+        output.close()

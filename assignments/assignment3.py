@@ -11,36 +11,8 @@ import numpy as np
 import pickle
 import sympy
 
-pkl_file = open('a1.pkl', 'rb')
-
-portfolio_value_by_the_end_of_week_0 = pickle.load(pkl_file)
-portfolio_value_by_the_end_of_week_1 = pickle.load(pkl_file)
-
-income_returns = pickle.load(pkl_file)
-price_returns = pickle.load(pkl_file)
-total_returns = pickle.load(pkl_file)
-
-week0_transaction_cost = pickle.load(pkl_file)
-week1_transaction_cost = pickle.load(pkl_file)
-
-pkl_file.close()
-
-pkl_file = open('a2.pkl', 'rb')
-
-week2_transaction_cost = pickle.load(pkl_file)
-portfolio_value_by_the_end_of_week_2 = pickle.load(pkl_file)
-
-income_returns = pickle.load(pkl_file)
-price_returns = pickle.load(pkl_file)
-total_returns = pickle.load(pkl_file)
-
-new_portfolio = pickle.load(pkl_file)
-
-weekly_fees = pickle.load(pkl_file)
-dividends_collection = pickle.load(pkl_file)
-
-pkl_file.close()
-
+income_returns, price_returns, total_returns, new_portfolio, portfolio_values, transaction_costs,\
+               weekly_fees, dividends_collection = Helpers.load_vars_from_pickle('a2.pkl')
 
 # Assignment 3:
 new_portfolio.reset_dividends()
@@ -55,6 +27,7 @@ new_portfolio.reset_dividends()
 print('Q1: Writing the modified holdings for last week.')
 new_portfolio.cash.shares += Helpers.week3_cash_infusion
 portfolio_value_by_the_end_of_week_2 = new_portfolio.get_value(Helpers.assignment2_end_date)
+portfolio_values[2] = portfolio_value_by_the_end_of_week_2
 IoHelpers.write_holdings('yassers', new_portfolio, Helpers.assignment2_end_date)
 
 # Question 2:
@@ -90,6 +63,8 @@ transaction = Transaction(Helpers.assignment3_trade_date, security, 1500, Helper
 week3_transaction_cost += transaction.transaction_cost
 new_portfolio = PortfolioHelpers.make_trade(new_portfolio, security, transaction)
 
+transaction_costs = np.append(transaction_costs, week3_transaction_cost)
+
 print(new_portfolio)
 assert new_portfolio.cash.shares / new_portfolio.get_value(Helpers.assignment3_end_date) < 0.05
 
@@ -101,6 +76,8 @@ IoHelpers.write_holdings('yassers', new_portfolio, Helpers.assignment3_end_date)
 # account summary text file for the four end-of-week dates through 2020-04-17.
 print('Q3: Writing account summary.')
 portfolio_value_by_the_end_of_week_3 = new_portfolio.get_value(Helpers.assignment3_end_date)
+
+portfolio_values = np.append(portfolio_values, portfolio_value_by_the_end_of_week_3)
 
 fourth_income_return, fourth_price_return, fourth_total_return = Helpers.get_returns(new_portfolio,
                                                                                      portfolio_value_by_the_end_of_week_2,
@@ -117,12 +94,8 @@ IoHelpers.write_account_summary(
     withdrawals=[0, 0, 0, 0],
     dividends=dividends_collection,
     fees=weekly_fees,
-    transactional_costs=[week0_transaction_cost, week1_transaction_cost, week2_transaction_cost, week3_transaction_cost],
-    values=[
-        portfolio_value_by_the_end_of_week_0,
-        portfolio_value_by_the_end_of_week_1,
-        portfolio_value_by_the_end_of_week_2,
-        portfolio_value_by_the_end_of_week_3],
+    transactional_costs=transaction_costs,
+    values=portfolio_values,
     income_returns=income_returns,
     price_returns=price_returns,
     total_returns=total_returns)
@@ -133,15 +106,15 @@ IoHelpers.write_account_summary(
 # a. The time-weighted rate of return
 # b.The money-weighted rate of return. With your solution, show the equation that the rate must satisfy.
 print('Q4: Time-Weighted Returns vs Money-Weighted Returns.')
-week1_return = portfolio_value_by_the_end_of_week_1 / portfolio_value_by_the_end_of_week_0
-week2_return = portfolio_value_by_the_end_of_week_2 / portfolio_value_by_the_end_of_week_1
-week3_return = (portfolio_value_by_the_end_of_week_3 - Helpers.week3_cash_infusion) / portfolio_value_by_the_end_of_week_2
+week1_return = portfolio_values[1] / portfolio_values[0]
+week2_return = portfolio_value_by_the_end_of_week_2 / portfolio_values[1]
+week3_return = (portfolio_value_by_the_end_of_week_3 - Helpers.week3_cash_infusion) / portfolio_values[2]
 time_weighted_rate_of_return = week3_return * week2_return * week1_return - 1
 
 r = sympy.symbols('r', real=True)
 equation = sympy.Eq(
     portfolio_value_by_the_end_of_week_3,
-    portfolio_value_by_the_end_of_week_0 * (1 + r) + Helpers.week3_cash_infusion * ((1 + r) ** (7 / 21)))
+    portfolio_values[0] * (1 + r) + Helpers.week3_cash_infusion * ((1 + r) ** (7 / 21)))
 internal_rate_of_return = money_weighted_rate_of_return = sympy.solve(equation)
 print(f'All values from solve: {internal_rate_of_return}')
 Helpers.myprint([f'Time-Weighted rate of return = {time_weighted_rate_of_return}',
@@ -151,23 +124,23 @@ Helpers.myprint([f'Time-Weighted rate of return = {time_weighted_rate_of_return}
 # Suppose that the portfolio valuation on 9 April is not available. For the period from 2020-04-03 to 2020-04-17:
 # a. Calculate a return using the mid-point Dietz formula.
 simple_dietz_return = \
-    (portfolio_value_by_the_end_of_week_3 - portfolio_value_by_the_end_of_week_1 - Helpers.week3_cash_infusion) / \
-    (portfolio_value_by_the_end_of_week_1 + Helpers.week3_cash_infusion / 2)
+    (portfolio_value_by_the_end_of_week_3 - portfolio_values[1] - Helpers.week3_cash_infusion) / \
+    (portfolio_values[1] + Helpers.week3_cash_infusion / 2)
 
 # b. Calculate a return using the modified (day-weighted) Dietz formula.
 modified_dietz_return = \
-    (portfolio_value_by_the_end_of_week_3 - portfolio_value_by_the_end_of_week_1 - Helpers.week3_cash_infusion) / \
-    (portfolio_value_by_the_end_of_week_1 + Helpers.week3_cash_infusion * 8 / 14)
+    (portfolio_value_by_the_end_of_week_3 - portfolio_values[1] - Helpers.week3_cash_infusion) / \
+    (portfolio_values[1] + Helpers.week3_cash_infusion * 8 / 14)
 
 # c. Calculate the internal rate of return.
 equation = sympy.Eq(
     portfolio_value_by_the_end_of_week_3,
-    portfolio_value_by_the_end_of_week_1 * (1 + r) + Helpers.week3_cash_infusion * (1 + r) ** (8 / 14))
+    portfolio_values[1] * (1 + r) + Helpers.week3_cash_infusion * (1 + r) ** (8 / 14))
 money_weighted_rate_of_return_for_weeks_1_3 = sympy.solve(equation)
 print(f'All values from solve: {money_weighted_rate_of_return_for_weeks_1_3}')
 
 # d. For comparison, also calculate the true time-weighted return, using the 9 April valuation.
-week2_return = (portfolio_value_by_the_end_of_week_2 - Helpers.week3_cash_infusion) / portfolio_value_by_the_end_of_week_1
+week2_return = (portfolio_value_by_the_end_of_week_2 - Helpers.week3_cash_infusion) / portfolio_values[1]
 week3_return = portfolio_value_by_the_end_of_week_3 / portfolio_value_by_the_end_of_week_2
 true_time_weighted_rate_of_return = week3_return * week2_return * week1_return - 1
 
@@ -183,29 +156,29 @@ Helpers.myprint(['Q5',
 
 # a. Calculate a return using the linked mid-point Dietz method.
 week_3_1_simple_dietz_return = \
-    (portfolio_value_by_the_end_of_week_3 - portfolio_value_by_the_end_of_week_1 - Helpers.week3_cash_infusion) / \
-    (portfolio_value_by_the_end_of_week_1 + Helpers.week3_cash_infusion / 2)
-week1_simple_dietz_return = (portfolio_value_by_the_end_of_week_1 - portfolio_value_by_the_end_of_week_0) / \
-                            portfolio_value_by_the_end_of_week_0
+    (portfolio_value_by_the_end_of_week_3 - portfolio_values[1] - Helpers.week3_cash_infusion) / \
+    (portfolio_values[1] + Helpers.week3_cash_infusion / 2)
+week1_simple_dietz_return = (portfolio_values[1] - portfolio_values[0]) / \
+                            portfolio_values[0]
 linked_simple_dietz_return = (1 + week1_simple_dietz_return) * (1 + week_3_1_simple_dietz_return) - 1
 
 # b. Calculate a return using the linked modified Dietz method.
 week_3_1_modified_dietz_return = \
-    (portfolio_value_by_the_end_of_week_3 - portfolio_value_by_the_end_of_week_1 - Helpers.week3_cash_infusion) / \
-    (portfolio_value_by_the_end_of_week_1 + Helpers.week3_cash_infusion * 8 / 14)
+    (portfolio_value_by_the_end_of_week_3 - portfolio_values[1] - Helpers.week3_cash_infusion) / \
+    (portfolio_values[1] + Helpers.week3_cash_infusion * 8 / 14)
 
 linked_modified_dietz_return = (1 + week1_simple_dietz_return) * (1 + week_3_1_modified_dietz_return) - 1
 
 # c. Calculate a return using the linked IRR method.
 equation = sympy.Eq(
-    portfolio_value_by_the_end_of_week_1,
-    portfolio_value_by_the_end_of_week_0 * (1 + r))  # Should this be initial balance?
+    portfolio_values[1],
+    portfolio_values[0] * (1 + r))  # Should this be initial balance?
 irr_1 = sympy.solve(equation)
 print(f'All values from solve: {irr_1}')
 
 equation = sympy.Eq(
     portfolio_value_by_the_end_of_week_3,
-    portfolio_value_by_the_end_of_week_1 * (1 + r) + Helpers.week3_cash_infusion * ((1 + r) ** 8 / 14))
+    portfolio_values[1] * (1 + r) + Helpers.week3_cash_infusion * ((1 + r) ** 8 / 14))
 irr_3 = sympy.solve(equation)
 print(f'All values from solve: {irr_3}')
 
@@ -213,9 +186,9 @@ linked_money_weighted_rate_of_return = (1 + irr_1[0]) * (1 + irr_3[1]) - 1
 
 # d. For comparison, also calculate the true time-weighted return, using the 9 April valuation.
 # Calculated already from Question 5.
-week1_return = portfolio_value_by_the_end_of_week_1 / portfolio_value_by_the_end_of_week_0
-week2_return = portfolio_value_by_the_end_of_week_2 / portfolio_value_by_the_end_of_week_1
-week3_return = (portfolio_value_by_the_end_of_week_3 - Helpers.week3_cash_infusion) / portfolio_value_by_the_end_of_week_2
+week1_return = portfolio_values[1] / portfolio_values[0]
+week2_return = portfolio_value_by_the_end_of_week_2 / portfolio_values[1]
+week3_return = (portfolio_value_by_the_end_of_week_3 - Helpers.week3_cash_infusion) / portfolio_values[2]
 true_time_weighted_rate_of_return = week3_return * week2_return * week1_return - 1
 
 Helpers.myprint(['Q6',
@@ -226,18 +199,8 @@ Helpers.myprint(['Q6',
 
 
 # Saving data
-output = open('a3.pkl', 'wb')
-
-pickle.dump(income_returns, output)
-pickle.dump(price_returns, output)
-pickle.dump(total_returns, output)
-
-pickle.dump(weekly_fees, output)
-pickle.dump(dividends_collection, output)
-
-pickle.dump(new_portfolio, output)
-
-pickle.dump(week3_transaction_cost, output)
+collection = np.array([income_returns, price_returns, total_returns, new_portfolio,
+                       portfolio_values, transaction_costs, weekly_fees, dividends_collection])
+Helpers.save_to_pickle(collection, 'a3.pkl')
 
 
-output.close()

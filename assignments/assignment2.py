@@ -5,24 +5,8 @@ from assignments.assignment_helpers import Helpers
 import numpy as np
 import pickle
 
-pkl_file = open('a1.pkl', 'rb')
-
-portfolio_value_by_the_end_of_week_0 = pickle.load(pkl_file)
-portfolio_value_by_the_end_of_week_1 = pickle.load(pkl_file)
-
-income_returns = pickle.load(pkl_file)
-price_returns = pickle.load(pkl_file)
-total_returns = pickle.load(pkl_file)
-
-week0_transaction_cost = pickle.load(pkl_file)
-week1_transaction_cost = pickle.load(pkl_file)
-
-new_portfolio = pickle.load(pkl_file)
-
-weekly_fees = pickle.load(pkl_file)
-dividends_collection = pickle.load(pkl_file)
-
-pkl_file.close()
+income_returns, price_returns, total_returns, new_portfolio, portfolio_values, transaction_costs,\
+               weekly_fees, dividends_collection = Helpers.load_vars_from_pickle('a1.pkl')
 
 
 # ### Assignment 2:
@@ -45,9 +29,12 @@ Helpers.myprint([f'The cash before discounting the fee is: {portfolio_cash_befor
                  f'The weekly fee on: {Helpers.weekly_fee_date} is: {weekly_fee}, cash in portfolio afterwards: {new_portfolio.cash}'])
 
 portfolio_value_by_the_end_of_week_2 = new_portfolio.get_value(Helpers.assignment2_end_date)
+
+portfolio_values = np.append(portfolio_values, portfolio_value_by_the_end_of_week_2)
+
 third_income_return, third_price_return, third_total_return = Helpers.get_returns(
     new_portfolio,
-    portfolio_value_by_the_end_of_week_1,
+    portfolio_values[1],
     Helpers.assignment2_end_date)
 
 income_returns = np.append(income_returns, third_income_return)
@@ -68,14 +55,14 @@ dividends_collection = np.append(dividends_collection, new_portfolio.dividends)
 # March 2020.
 assignment2_portfolio_value = new_portfolio.get_value(Helpers.assignment2_end_date)
 net_of_fees_returns = Helpers.get_price_return(
-    value_before=portfolio_value_by_the_end_of_week_0,
+    value_before=portfolio_values[0],
     value_after=portfolio_value_by_the_end_of_week_2)
 Helpers.myprint([f'Net of fees returns = {net_of_fees_returns}'])
 
 # b. Calculate an approximate gross-of-fees return from inception to this date. Describe any assumptions used.
 assignment2_portfolio_value = new_portfolio.get_value(Helpers.assignment2_end_date)
 gross_of_fees_returns = Helpers.get_price_return(
-    value_before=portfolio_value_by_the_end_of_week_0,
+    value_before=portfolio_values[0],
     value_after=portfolio_value_by_the_end_of_week_2 + + sum(map(lambda fee: fee, weekly_fees)))
 Helpers.myprint([f'Gross of fees returns = {gross_of_fees_returns}'])
 
@@ -86,7 +73,7 @@ Helpers.myprint([f'Gross of fees returns = {gross_of_fees_returns}'])
 assignment2_post_tax_portfolio_value = \
     PortfolioHelpers.get_post_tax_liquidation_value(
         current_value=portfolio_value_by_the_end_of_week_2,
-        capital_gain=max(0, portfolio_value_by_the_end_of_week_2 - portfolio_value_by_the_end_of_week_0),
+        capital_gain=max(0, portfolio_value_by_the_end_of_week_2 - portfolio_values[0]),
         dividends=sum(map(lambda _dividend: _dividend, dividends_collection)),
         capital_gain_tax_rate=0.15,
         dividends_tax_rate=0.15)
@@ -99,17 +86,8 @@ Helpers.myprint([f'The pre-tax value of the portfolio: {assignment2_portfolio_va
 output = open('a2.pkl', 'wb')
 
 week2_transaction_cost = 0
+transaction_costs = np.append(transaction_costs, week2_transaction_cost)
 
-pickle.dump(week2_transaction_cost, output)
-pickle.dump(portfolio_value_by_the_end_of_week_2, output)
-
-pickle.dump(income_returns, output)
-pickle.dump(price_returns, output)
-pickle.dump(total_returns, output)
-
-pickle.dump(new_portfolio, output)
-
-pickle.dump(weekly_fees, output)
-pickle.dump(dividends_collection, output)
-
-output.close()
+collection = np.array([income_returns, price_returns, total_returns, new_portfolio,
+                       portfolio_values, transaction_costs, weekly_fees, dividends_collection])
+Helpers.save_to_pickle(collection, 'a2.pkl')
