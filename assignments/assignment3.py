@@ -8,7 +8,6 @@ from src.transaction import Transaction
 from assignments.assignment_helpers import Helpers
 
 import numpy as np
-import pickle
 import sympy
 
 income_returns, price_returns, total_returns, new_portfolio, portfolio_values, transaction_costs,\
@@ -76,7 +75,6 @@ IoHelpers.write_holdings('yassers', new_portfolio, Helpers.assignment3_end_date)
 # account summary text file for the four end-of-week dates through 2020-04-17.
 print('Q3: Writing account summary.')
 portfolio_value_by_the_end_of_week_3 = new_portfolio.get_value(Helpers.assignment3_end_date)
-
 portfolio_values = np.append(portfolio_values, portfolio_value_by_the_end_of_week_3)
 
 fourth_income_return, fourth_price_return, fourth_total_return = Helpers.get_returns(new_portfolio,

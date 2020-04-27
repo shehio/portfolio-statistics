@@ -1,5 +1,6 @@
 from src.portfoliohelpers import PortfolioHelpers
 from src.portfoliohelpers import FeeFrequency
+from src.iohelpers import IoHelpers
 from assignments.assignment_helpers import Helpers
 
 import numpy as np
@@ -18,6 +19,7 @@ new_portfolio = PortfolioHelpers.get_portfolio_after_splits(new_portfolio, Helpe
                                                             Helpers.assignment2_end_date)
 new_portfolio = PortfolioHelpers.collect_dividends_if_any(new_portfolio, Helpers.assignment1_end_date,
                                                           Helpers.assignment2_end_date)
+IoHelpers.write_holdings('yassers', new_portfolio, Helpers.assignment2_end_date)
 
 weekly_fee = PortfolioHelpers.get_fee(new_portfolio, Helpers.annual_fee, FeeFrequency.weekly,
                                       Helpers.assignment1_end_date)

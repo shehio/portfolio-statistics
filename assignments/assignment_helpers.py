@@ -6,7 +6,6 @@ from src.security import Security
 from src.transaction import Transaction
 from src.transactionshistory import TransactionsHistory
 
-
 import datetime
 import numpy as np
 import pickle
@@ -30,6 +29,8 @@ class Helpers:
     assignment2_end_date = datetime.date(2020, 4, 9)  # Market was closed on Good Friday.
     assignment3_trade_date = datetime.date(2020, 4, 17)
     week3_cash_infusion = 100_000
+
+    assignment4_end_date = datetime.date(2020, 4, 24)
 
     @staticmethod
     def get_div_return(value_before, value_after):
@@ -118,7 +119,7 @@ class Helpers:
 
         pkl_file.close()
 
-        return income_returns, price_returns, total_returns, new_portfolio, portfolio_values, transaction_costs,\
+        return income_returns, price_returns, total_returns, new_portfolio, portfolio_values, transaction_costs, \
                weekly_fees, dividends_collection
 
     @staticmethod
@@ -128,16 +129,5 @@ class Helpers:
 
         for var in collection:
             pickle.dump(var, output)
-        # pickle.dump(income_returns, output)
-        # pickle.dump(price_returns, output)
-        # pickle.dump(total_returns, output)
-        #
-        # pickle.dump(new_portfolio, output)
-        #
-        # pickle.dump(portfolio_values, output)
-        # pickle.dump(transaction_costs, output)
-        #
-        # pickle.dump(weekly_fees, output)
-        # pickle.dump(dividends_collection, output)
 
         output.close()
