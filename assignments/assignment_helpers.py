@@ -1,9 +1,7 @@
 from src.apihelpers import ApiHelpers
 from src.currency import Currency
-from src.iohelpers import IoHelpers
 from src.portfolio import Portfolio
 from src.portfoliohelpers import PortfolioHelpers
-from src.portfoliohelpers import FeeFrequency
 from src.security import Security
 from src.transaction import Transaction
 from src.transactionshistory import TransactionsHistory
@@ -11,9 +9,21 @@ from src.transactionshistory import TransactionsHistory
 
 import datetime
 import numpy as np
-import sympy
+
 
 class Helpers:
+    security_count = 20
+    maximum_security_weight = 0.2
+    maximum_cash_weight = 0.05
+    broker_transaction_cost = 0.001
+    fee_per_week = 0.01 * 0.01 * 2
+    annual_fee = 1.04 / 100
+    start_date = datetime.date(2020, 3, 27)
+    assignment1_end_date = datetime.date(2020, 4, 3)
+    assignment2_end_date = datetime.date(2020, 4, 9)
+    trade_date = datetime.date(2020, 4, 3)
+    weekly_fee_date = datetime.date(2020, 4, 3)
+    that_initial_balance = 1000 * 1000
 
     @staticmethod
     def get_div_return(value_before, value_after):
@@ -45,10 +55,15 @@ class Helpers:
             _transaction = Transaction(inception_date, _security, shares, broker_transaction_cost, Currency.Dollars)
             transactions_history.push_transaction(_transaction)
 
-        total_transaction_cost = sum(map(
+        total_transaction_value = sum(map(
             lambda _transaction: _transaction.price,
             transactions_history.transactions))
-        current_balance = initial_balance - total_transaction_cost
+
+        total_transaction_cost = sum(map(
+            lambda _transaction: _transaction.transaction_cost,
+            transactions_history.transactions))
+
+        current_balance = initial_balance - total_transaction_value
         current_balance = Security('CASHX', current_balance, 'None', Currency.Dollars)
         return Portfolio(current_balance, inception_date, securities, transactions_history), total_transaction_cost
 
