@@ -10,13 +10,9 @@ pkl_file = open('a1.pkl', 'rb')
 portfolio_value_by_the_end_of_week_0 = pickle.load(pkl_file)
 portfolio_value_by_the_end_of_week_1 = pickle.load(pkl_file)
 
-first_income_return = pickle.load(pkl_file)
-first_price_return = pickle.load(pkl_file)
-first_total_return = pickle.load(pkl_file)
-
-second_income_return = pickle.load(pkl_file)
-second_price_return = pickle.load(pkl_file)
-second_total_return = pickle.load(pkl_file)
+income_returns = pickle.load(pkl_file)
+price_returns = pickle.load(pkl_file)
+total_returns = pickle.load(pkl_file)
 
 week0_transaction_cost = pickle.load(pkl_file)
 week1_transaction_cost = pickle.load(pkl_file)
@@ -53,6 +49,10 @@ third_income_return, third_price_return, third_total_return = Helpers.get_return
     new_portfolio,
     portfolio_value_by_the_end_of_week_1,
     Helpers.assignment2_end_date)
+
+income_returns = np.append(income_returns, third_income_return)
+price_returns = np.append(price_returns, third_price_return)
+total_returns = np.append(total_returns, third_total_return)
 
 Helpers.myprint([f'Third Income Return = {third_income_return}',
                  f'Third Price Return = {third_price_return}',
@@ -103,9 +103,9 @@ week2_transaction_cost = 0
 pickle.dump(week2_transaction_cost, output)
 pickle.dump(portfolio_value_by_the_end_of_week_2, output)
 
-pickle.dump(third_income_return, output)
-pickle.dump(third_price_return, output)
-pickle.dump(third_total_return, output)
+pickle.dump(income_returns, output)
+pickle.dump(price_returns, output)
+pickle.dump(total_returns, output)
 
 pickle.dump(new_portfolio, output)
 

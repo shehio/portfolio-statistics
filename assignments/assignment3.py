@@ -16,13 +16,9 @@ pkl_file = open('a1.pkl', 'rb')
 portfolio_value_by_the_end_of_week_0 = pickle.load(pkl_file)
 portfolio_value_by_the_end_of_week_1 = pickle.load(pkl_file)
 
-first_income_return = pickle.load(pkl_file)
-first_price_return = pickle.load(pkl_file)
-first_total_return = pickle.load(pkl_file)
-
-second_income_return = pickle.load(pkl_file)
-second_price_return = pickle.load(pkl_file)
-second_total_return = pickle.load(pkl_file)
+income_returns = pickle.load(pkl_file)
+price_returns = pickle.load(pkl_file)
+total_returns = pickle.load(pkl_file)
 
 week0_transaction_cost = pickle.load(pkl_file)
 week1_transaction_cost = pickle.load(pkl_file)
@@ -34,9 +30,9 @@ pkl_file = open('a2.pkl', 'rb')
 week2_transaction_cost = pickle.load(pkl_file)
 portfolio_value_by_the_end_of_week_2 = pickle.load(pkl_file)
 
-third_income_return = pickle.load(pkl_file)
-third_price_return = pickle.load(pkl_file)
-third_total_return = pickle.load(pkl_file)
+income_returns = pickle.load(pkl_file)
+price_returns = pickle.load(pkl_file)
+total_returns = pickle.load(pkl_file)
 
 new_portfolio = pickle.load(pkl_file)
 
@@ -110,6 +106,10 @@ fourth_income_return, fourth_price_return, fourth_total_return = Helpers.get_ret
                                                                                      portfolio_value_by_the_end_of_week_2,
                                                                                      Helpers.assignment3_end_date)
 
+income_returns = np.append(income_returns, fourth_income_return)
+price_returns = np.append(price_returns, fourth_price_return)
+total_returns = np.append(total_returns, fourth_total_return)
+
 IoHelpers.write_account_summary(
     account_name='yassers',
     dates=[Helpers.start_date, Helpers.assignment1_end_date, Helpers.assignment2_end_date, Helpers.assignment3_end_date],
@@ -123,9 +123,9 @@ IoHelpers.write_account_summary(
         portfolio_value_by_the_end_of_week_1,
         portfolio_value_by_the_end_of_week_2,
         portfolio_value_by_the_end_of_week_3],
-    income_returns=[first_income_return, second_income_return, third_income_return, fourth_income_return],
-    price_returns=[first_price_return, second_price_return, third_price_return, fourth_price_return],
-    total_returns=[first_total_return, second_total_return, third_total_return, fourth_total_return])
+    income_returns=income_returns,
+    price_returns=price_returns,
+    total_returns=total_returns)
 
 # Question 4
 # Assume that the initial cash flow of $1 million entered the portfolio at the end of the day on 23 March 2020.
@@ -228,9 +228,9 @@ Helpers.myprint(['Q6',
 # Saving data
 output = open('a3.pkl', 'wb')
 
-pickle.dump(fourth_income_return, output)
-pickle.dump(fourth_price_return, output)
-pickle.dump(fourth_total_return, output)
+pickle.dump(income_returns, output)
+pickle.dump(price_returns, output)
+pickle.dump(total_returns, output)
 
 pickle.dump(weekly_fees, output)
 pickle.dump(dividends_collection, output)

@@ -13,13 +13,9 @@ pkl_file = open('a1.pkl', 'rb')
 portfolio_value_by_the_end_of_week_0 = pickle.load(pkl_file)
 portfolio_value_by_the_end_of_week_1 = pickle.load(pkl_file)
 
-first_income_return = pickle.load(pkl_file)
-first_price_return = pickle.load(pkl_file)
-first_total_return = pickle.load(pkl_file)
-
-second_income_return = pickle.load(pkl_file)
-second_price_return = pickle.load(pkl_file)
-second_total_return = pickle.load(pkl_file)
+income_returns = pickle.load(pkl_file)
+price_returns = pickle.load(pkl_file)
+total_returns = pickle.load(pkl_file)
 
 week0_transaction_cost = pickle.load(pkl_file)
 week1_transaction_cost = pickle.load(pkl_file)
@@ -28,20 +24,25 @@ pkl_file.close()
 
 pkl_file = open('a2.pkl', 'rb')
 
-third_income_return = pickle.load(pkl_file)
-third_price_return = pickle.load(pkl_file)
-third_total_return = pickle.load(pkl_file)
-
 week2_transaction_cost = pickle.load(pkl_file)
-portfolio_value_by_the_end_of_week_1 = pickle.load(pkl_file)
+portfolio_value_by_the_end_of_week_2 = pickle.load(pkl_file)
+
+income_returns = pickle.load(pkl_file)
+price_returns = pickle.load(pkl_file)
+total_returns = pickle.load(pkl_file)
+
+new_portfolio = pickle.load(pkl_file)
+
+weekly_fees = pickle.load(pkl_file)
+dividends_collection = pickle.load(pkl_file)
 
 pkl_file.close()
 
 pkl_file = open('a3.pkl', 'rb')
 
-fourth_income_return = pickle.load(pkl_file)
-fourth_price_return = pickle.load(pkl_file)
-fourth_total_return = pickle.load(pkl_file)
+income_returns = pickle.load(pkl_file)
+price_returns = pickle.load(pkl_file)
+total_returns = pickle.load(pkl_file)
 
 weekly_fees = pickle.load(pkl_file)
 dividends_collection = pickle.load(pkl_file)

@@ -7,7 +7,6 @@ from src.transaction import Transaction
 
 from assignments.assignment_helpers import Helpers
 
-import datetime
 import numpy as np
 import pickle
 
@@ -76,19 +75,19 @@ Helpers.myprint([f'Second Income Return = {second_income_return}',
                  f'Second Price Return = {second_price_return}',
                  f'Second Total Return = {second_total_return}'])
 
+income_returns = np.array([first_income_return, second_income_return])
+price_returns = np.array([first_price_return, second_price_return])
+total_returns = np.array([first_total_return, second_total_return])
+
 # Saving data
 output = open('a1.pkl', 'wb')
 
 pickle.dump(portfolio_value_by_the_end_of_week_0, output)
 pickle.dump(portfolio_value_by_the_end_of_week_1, output)
 
-pickle.dump(first_income_return, output)
-pickle.dump(first_price_return, output)
-pickle.dump(first_total_return, output)
-
-pickle.dump(second_income_return, output)
-pickle.dump(second_price_return, output)
-pickle.dump(second_total_return, output)
+pickle.dump(income_returns, output)
+pickle.dump(price_returns, output)
+pickle.dump(total_returns, output)
 
 pickle.dump(week0_transaction_cost, output)
 pickle.dump(week1_transaction_cost, output)
