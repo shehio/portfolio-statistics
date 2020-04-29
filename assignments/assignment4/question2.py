@@ -10,6 +10,51 @@ CASHX_INDUSTRY_NAME = 'Liquidity Reserve'
 CASH_SECTOR = Sector(CASHX_INDUSTRY_ID, CASHX_INDUSTRY_NAME)
 
 
+# One common classification scheme for equity securities is the Industry Classification Benchmark (ICB)
+# scheme, described at https://www.ftserussell.com/data/industry-classification-benchmark-icb and in the
+# documents posted in the course readings. Also posted is a file, H-R3000-2020-03-27.csv, that contains
+# the holdings and ICB classifications of the constituents of the Russell 3000 as of 2020-03-27. This data
+# was supplied courtesy of FTSE Russell. You are welcome to browse the contents of this file, which
+# includes many items that are typically provided daily by an index vendor to its clients.
+# Posted with the assignment is the file getICBIndustries.R. Included in the script is the function
+# getSectors() that gets the sector numbers and sector names for a vector of tickers. The usage example in
+# the file does the following:
+# • Reads the R3000 holdings file,
+# • Reads your holdings file,
+# • Downloads prices and calculates the market values of the holdings,
+# • Extracts the sectors for your tickers,
+# • Aggregates the market values by sector,
+# • Adds rows for sectors with zero holdings,
+# • Calculates weights by sector,
+# • Adds a date column.
+# The example code does all of the above in a loop through the weekly holdings dates and concatenates
+# the sector weights into a single table.
+# Read and modify the example code to run on your holdings files. Understanding the example will be
+# useful for the next step.
+
+# The file S-R1000-2020-04-17.csv contains a weekly history of sector weights and returns for the Russell
+# 1000 Index. This data was supplied courtesy of FTSE Russell. The goal of this assignment is to build a
+# similar history table from your weekly portfolio holdings.
+# Posted with the assignment is the file calcWeightsAndReturns.R. The function in this file calculates
+# weights and returns of assets over a single week, given the holdings at the beginning of the week, and
+# cash flow information from the Account Summary. The asset returns are calculated assuming all
+# transactions and cash flows occur at the end of the week. Holdings are adjusted for splits and asset
+# returns include dividends. The function returns the holdings table augmented with columns including ABV,
+# weight, AEV, and return.
+# The example code calls the function in a loop over the weekly dates.
+# You are to modify the code in the loop to complete the calculation of sector weights and returns for your
+# portfolio holdings:
+# • Get the sector information for your assets and merge with the holdings table,
+# • Aggregate the ABV and AEV by sector,
+# • Calculate weights and returns by sector,
+# • Add rows to the table for sectors that have zero weight,
+# • Add a date column to the table,
+# • Concatenate the sector weights and returns into a single table.
+# Write the final history table to a file named like S-<uwid>-<yyyy-mm-dd>.csv and submit.
+# We will use the sector weights and returns files to calculate sector-based performance attribution in next
+# week’s assignment. If you wish, you may go ahead and calculate attribution from your sector weights and
+# returns and the R1000 sector weights and returns.
+
 def get_sectors_from_holdings(_holdings: dict, _sectors_map: dict):
 
     portfolio_sectors = {}

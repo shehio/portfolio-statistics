@@ -13,6 +13,9 @@ def my_round(number):
 
 
 class Asset:
+    # Notice that the way this works might not be extremely straightforward.
+    # The returns are expected to be in % while the weights are not.
+    # Will fix this in the next iteration.
     def __init__(self, portfolio_weight, benchmark_weight, portfolio_return, benchmark_return):
         self.portfolio_weight = portfolio_weight
         self.benchmark_weight = benchmark_weight
