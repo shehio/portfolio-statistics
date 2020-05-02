@@ -12,7 +12,7 @@ def my_round(number):
     return round(number, 4)
 
 
-class Asset:
+class AssetAttribution:
     # Notice that the way this works might not be extremely straightforward.
     # The returns are expected to be in % while the weights are not.
     # Will fix this in the next iteration.
@@ -50,9 +50,9 @@ class Asset:
 # Cash                  5                   0                   0.10                0.10
 
 
-equity = Asset(0.6, 0.6, 5.95, 5.42)
-fixed_income = Asset(0.35, 0.4, -0.58, -0.55)
-cash = Asset(0.05, 0, 0.1, 0.1)
+equity = AssetAttribution(0.6, 0.6, 5.95, 5.42)
+fixed_income = AssetAttribution(0.35, 0.4, -0.58, -0.55)
+cash = AssetAttribution(0.05, 0, 0.1, 0.1)
 assets = np.array([equity, fixed_income, cash])
 benchmark_total_return = sum(map(lambda asset: asset.benchmark_weight * asset.benchmark_return, assets))
 
