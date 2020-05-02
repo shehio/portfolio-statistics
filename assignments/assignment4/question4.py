@@ -1,4 +1,5 @@
 from src.performance.assetattribution import AssetAttribution
+from src.performance.portfolioattribution import PortfolioAttribution
 
 import numpy as np
 
@@ -19,6 +20,17 @@ def my_round(number):
 # Fixed Income          35                  40                  –0.58               –0.55
 # Cash                  5                   0                   0.10                0.10
 
+
+portfolio_attribution = PortfolioAttribution(
+    portfolio_weights=np.array([0.6, 0.35, 0.05]),
+    benchmark_weights=np.array([0.6, 0.4, 0]),
+    portfolio_returns=np.array([5.95, -0.58, 0.10]),
+    benchmark_returns=np.array([5.42, -0.55, 0.10]))
+
+
+print(f'New Allocations: {portfolio_attribution.get_allocations()}')
+print(f'New Selections: {portfolio_attribution.get_selections()}')
+print(f'New Interactions: {portfolio_attribution.get_interactions()}')
 
 equity = AssetAttribution(0.6, 0.6, 5.95, 5.42)
 fixed_income = AssetAttribution(0.35, 0.4, -0.58, -0.55)

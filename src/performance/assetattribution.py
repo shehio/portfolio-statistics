@@ -8,8 +8,8 @@ class AssetAttribution:
         self.portfolio_return = portfolio_return
         self.benchmark_return = benchmark_return
 
-    def get_allocation(self, _benchmark_total_return):
-        return (self.portfolio_weight - self.benchmark_weight) * (self.benchmark_return - _benchmark_total_return)
+    def get_allocation(self, benchmark_total_return):
+        return (self.portfolio_weight - self.benchmark_weight) * (self.benchmark_return - benchmark_total_return)
 
     def get_selection(self):
         return self.benchmark_weight * (self.portfolio_return - self.benchmark_return)
@@ -17,11 +17,11 @@ class AssetAttribution:
     def get_interaction(self):
         return (self.portfolio_weight - self.benchmark_weight) * (self.portfolio_return - self.benchmark_return)
 
-    def get_top_down_allocation(self, _benchmark_total_return):
-        return self.get_allocation(_benchmark_total_return)
+    def get_top_down_allocation(self, benchmark_total_return):
+        return self.get_allocation(benchmark_total_return)
 
-    def get_bottom_up_allocation(self, _benchmark_total_return):
-        return (self.portfolio_weight - self.benchmark_weight) * (self.portfolio_return - _benchmark_total_return)
+    def get_bottom_up_allocation(self, benchmark_total_return):
+        return (self.portfolio_weight - self.benchmark_weight) * (self.portfolio_return - benchmark_total_return)
 
     def get_top_down_selection(self):
         return self.portfolio_weight * (self.portfolio_return - self.benchmark_return)
