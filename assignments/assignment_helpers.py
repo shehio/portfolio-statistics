@@ -31,6 +31,7 @@ class Helpers:
     week3_cash_infusion = 100_000
 
     assignment4_end_date = datetime.date(2020, 4, 24)
+    assignment5_end_date = datetime.date(2020, 5, 1)
 
     @staticmethod
     def get_div_return(value_before, value_after):
