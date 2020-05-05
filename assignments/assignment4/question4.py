@@ -31,6 +31,11 @@ portfolio_attribution = PortfolioAttribution(
 print(f'New Allocations: {portfolio_attribution.get_allocations()}')
 print(f'New Selections: {portfolio_attribution.get_selections()}')
 print(f'New Interactions: {portfolio_attribution.get_interactions()}')
+print(f'New Top-Down Allocation: {portfolio_attribution.get_top_down_allocations()}')
+print(f'New Top-Down Selections: {portfolio_attribution.get_top_down_selections()}')
+print(f'New Bottom-Up Allocation: {portfolio_attribution.get_bottom_up_allocations()}')
+print(f'New Bottom-Up Selections: {portfolio_attribution.get_bottom_up_selections()}')
+
 
 equity = AssetAttribution(0.6, 0.6, 5.95, 5.42)
 fixed_income = AssetAttribution(0.35, 0.4, -0.58, -0.55)

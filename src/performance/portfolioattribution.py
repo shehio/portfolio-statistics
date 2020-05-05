@@ -49,6 +49,34 @@ class PortfolioAttribution:
 
         return interactions
 
+    def get_top_down_allocations(self):
+        allocations = np.array([])
+        for asset_attribution in self.asset_attributions:
+            allocations = np.append(allocations, asset_attribution.get_top_down_allocation(self.benchmark_total_return))
+
+        return allocations
+
+    def get_bottom_up_allocations(self):
+        allocations = np.array([])
+        for asset_attribution in self.asset_attributions:
+            allocations = np.append(allocations, asset_attribution.get_bottom_up_allocation(self.benchmark_total_return))
+
+        return allocations
+
+    def get_top_down_selections(self):
+        selections = np.array([])
+        for asset_attribution in self.asset_attributions:
+            selections = np.append(selections, asset_attribution.get_top_down_selection())
+
+        return selections
+
+    def get_bottom_up_selections(self):
+        selections = np.array([])
+        for asset_attribution in self.asset_attributions:
+            selections = np.append(selections, asset_attribution.get_bottom_up_selection())
+
+        return selections
+
     def get_total_attribution(self):
         total_attributions = np.array([])
         for asset_attribution in self.asset_attributions:
