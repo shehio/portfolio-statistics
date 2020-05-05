@@ -1,3 +1,5 @@
+from assignments.assignment_helpers import Helpers
+
 import numpy as np
 
 
@@ -75,5 +77,25 @@ def Q2():
     print(f'Linked Geometric Excess Returns {link_geometric_excess_returns(_portfolio_returns, _benchmark_returns)}')
 
 
+def Q2_corrected():
+    _, _, _, _, portfolio_values, _, _, dividends_collection = Helpers.load_vars_from_pickle('./../a4.pkl')
+
+    week1_return = portfolio_values[1] / portfolio_values[0]
+    week2_return = portfolio_values[2] / portfolio_values[1]
+    week3_return = (portfolio_values[3] - Helpers.week3_cash_infusion) / portfolio_values[2]
+    week4_return = portfolio_values[4] / portfolio_values[3]
+    time_weighted_portfolio_return = week4_return * week3_return * week2_return * week1_return - 1
+    time_weighted_benchmark_return = 7932 / 8135 * 8933 / 7932 * 9203 / 8933 * 9090 / 9203 - 1
+
+    arithmetic_excess_return = time_weighted_portfolio_return - time_weighted_benchmark_return
+
+    geometric_excess_return = np.exp(
+        __calculate_kt(time_weighted_portfolio_return, time_weighted_benchmark_return) * arithmetic_excess_return) - 1
+
+    print(f'Time-weighted Benchmark Return: {time_weighted_benchmark_return * 100}')
+    print(f'Arithmetic Excess Return: {arithmetic_excess_return * 100}')
+    print(f'Geometric Excess Return: {geometric_excess_return * 100}')
+
+
 if __name__ == "__main__":
-    Q2()
+    Q2_corrected()

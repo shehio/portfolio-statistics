@@ -18,20 +18,21 @@ class Helpers:
     broker_transaction_cost = 0.001
     fee_per_week = 0.01 * 0.01 * 2
     annual_fee = 1.04 / 100
-    start_date = datetime.date(2020, 3, 27)
-    assignment1_end_date = datetime.date(2020, 4, 3)
-    assignment2_end_date = datetime.date(2020, 4, 9)
-    trade_date = datetime.date(2020, 4, 3)
-    weekly_fee_date = datetime.date(2020, 4, 3)
-    that_initial_balance = 1000 * 1000
 
-    assignment3_end_date = datetime.date(2020, 4, 17)
-    assignment2_end_date = datetime.date(2020, 4, 9)  # Market was closed on Good Friday.
-    assignment3_trade_date = datetime.date(2020, 4, 17)
+    start_date = datetime.date(2020, 3, 27)
+    weekly_fee_date = datetime.date(2020, 4, 3)
+
+    that_initial_balance = 1000 * 1000
     week3_cash_infusion = 100_000
 
+    assignment1_end_date = datetime.date(2020, 4, 3)
+    assignment2_end_date = datetime.date(2020, 4, 9)  # Market was closed on Good Friday.
+    assignment3_end_date = datetime.date(2020, 4, 17)
     assignment4_end_date = datetime.date(2020, 4, 24)
     assignment5_end_date = datetime.date(2020, 5, 1)
+
+    trade_date = datetime.date(2020, 4, 3)
+    assignment3_trade_date = datetime.date(2020, 4, 17)
 
     @staticmethod
     def get_div_return(value_before, value_after):
