@@ -8,7 +8,6 @@ from src.transaction import Transaction
 from assignments.assignment_helpers import Helpers
 
 import numpy as np
-import pickle
 
 current_tickers = ["AAPL", "ALK", "AMZN", "ADBE", "GOOGL", "CSCO", "CIT", "DAL", "EA", "GS",
                    "IBM", "LYFT", "EXPE", "MS", "MSFT", "NKE", "T", "TWTR", "UBER", "VMW"]
