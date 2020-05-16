@@ -4,6 +4,7 @@ from .sector import Sector
 import csv
 import datetime
 import numpy as np
+import pandas
 
 
 class IoHelpers:
@@ -26,19 +27,19 @@ class IoHelpers:
             account_name, dates, deposits, withdrawals, dividends, fees,
             transactional_costs, values, income_returns, price_returns, total_returns):
         content = 'account.name,as.of.date,deposits,withdrawals,' \
-              'dividends,fees,tc,value,income.return,price.return,total.return\n'
+                  'dividends,fees,tc,value,income.return,price.return,total.return\n'
 
-        for date, deposit, withdrawal, dividend, fee, transactional_cost,\
+        for date, deposit, withdrawal, dividend, fee, transactional_cost, \
             value, income_return, price_return, total_return in zip(dates, deposits, withdrawals, dividends,
                                                                     fees, transactional_costs, values, income_returns,
                                                                     price_returns, total_returns):
             content += f'{account_name},{date},{deposit},{withdrawal},{dividend},' \
-                   f'{fee},{transactional_cost},{value},{income_return},{price_return},{total_return}\n'
+                       f'{fee},{transactional_cost},{value},{income_return},{price_return},{total_return}\n'
 
         csv_file = open(f'./statements/A-{account_name}-{dates[len(dates) - 1]}.csv', 'w')
         csv_file.write(content)
         csv_file.close()
-    
+
     @staticmethod  # The keys of both dicts inside both list have to be identical.
     def write_s_file(week_endings, weights_by_sector_list, returns_by_sector_list):
         content = 'week.ending, ICB.industry.num, ICB.industry.name, weight, return\n'
@@ -84,3 +85,11 @@ class IoHelpers:
     @staticmethod
     def read_csv(file_name: str):  # This is not implemented properly.
         return csv.reader(open(file_name))
+
+    @staticmethod
+    def read_russel_returns(file_name: str):
+        return pandas.read_csv(
+            file_name,
+            index_col='Date',
+            parse_dates=['Date'],
+            date_parser=lambda date: datetime.datetime.strptime(date, "%m/%d/%Y"))
