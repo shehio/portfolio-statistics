@@ -14,6 +14,7 @@ def get_approximated_returns(prices_array: np.array):
     normalized_prices = prices_array / 100
     return 100 / 3 * (normalized_prices * t_bills_ratio) / (1 - (normalized_prices * t_bills_ratio))
 
+
 # This could be more generic by passing in the symbol.
 def get_t_bills_monthly_returns(start_date: datetime.date, end_date: datetime.date, get_returns_lambda):
     prices_dataframe = yf.download(
@@ -35,7 +36,7 @@ if __name__ == '__main__':
     # Our use of the approximation during this course, that cash returns are zero, appears to be reasonable.
 
     start_date = datetime.date(2000, 1, 1)
-    end_date = datetime.date(2010, 12, 31)
+    end_date = datetime.date(2009, 12, 31)
 
     t_bills_returns = get_t_bills_monthly_returns(start_date, end_date, get_approximated_returns)
     returns_count = t_bills_returns.shape[0]
@@ -50,3 +51,4 @@ if __name__ == '__main__':
     geometric_return = 100 * (np.float_power(
         prod(map(lambda _return: 1 + _return / 100.0, t_bills_returns)), 1.0 / returns_count) - 1)
     print(f'Geometric Mean Rate Of Return: {round(geometric_return, 2)}%')
+
