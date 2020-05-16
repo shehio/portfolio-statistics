@@ -39,7 +39,6 @@ if __name__ == '__main__':
 
     start_date = datetime.date(2000, 1, 1)
     end_date = datetime.date(2009, 12, 31)
-
     t_bills_returns = get_t_bills_monthly_returns(start_date, end_date)
     returns_count = t_bills_returns.shape[0]
     geometric_return = 100 * (np.float_power(
@@ -48,7 +47,6 @@ if __name__ == '__main__':
 
     start_date = datetime.date(2000, 1, 1)
     end_date = datetime.date(2019, 12, 31)
-
     t_bills_returns = get_t_bills_monthly_returns(start_date, end_date)
     geometric_return = 100 * (np.float_power(
         prod(map(lambda _return: 1 + _return / 100.0, t_bills_returns)), 1.0 / returns_count) - 1)

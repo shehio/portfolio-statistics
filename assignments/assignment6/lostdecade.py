@@ -1,6 +1,9 @@
 import datetime
 import numpy as np
 
+from assignments.assignment6.tbills import get_t_bills_monthly_returns
+from assignments.assignment6.russelreturns import get_russel_monthly_returns
+
 # The decade of the 2000s has been called the “lost decade” for the U.S. economy (Neil Irwin, “Aughts
 # were a lost decade for U.S. economy, workers,” The Washington Post, 2 January 2010). We will take a
 # look at the returns from investments in stocks and cash over this decade. You may use either R or a
@@ -19,5 +22,12 @@ import numpy as np
 
 if __name__ == '__main__':
     ratios = np.array([i * 10 for i in range(11)])
+
     start_date = datetime.date(2000, 1, 1)
     end_date = datetime.date(2009, 12, 31)
+
+    t_bills_returns = get_t_bills_monthly_returns(start_date, end_date)
+    russel_monthly_returns = get_russel_monthly_returns(start_date, end_date)
+
+
+
