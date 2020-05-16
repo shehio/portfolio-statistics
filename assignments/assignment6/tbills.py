@@ -16,14 +16,16 @@ def get_approximated_returns(prices_array: np.array):
 
 
 # This could be more generic by passing in the symbol.
-def get_t_bills_monthly_returns(start_date: datetime.date, end_date: datetime.date, get_returns_lambda):
-    prices_dataframe = yf.download(
+def get_t_bills_monthly_returns(
+        _start_date: datetime.date,
+        _end_date: datetime.date,
+        get_returns_lambda=get_approximated_returns):
+    prices = yf.download(
         '^IRX',
-        start=start_date,
-        end=end_date,
+        start=_start_date,
+        end=_end_date,
         progress=False)['Close']
-    monthly_prices = prices_dataframe.loc[
-        prices_dataframe.groupby(prices_dataframe.index.to_period('M')).apply(lambda x: x.index.max())]
+    monthly_prices = prices.loc[prices.groupby(prices.index.to_period('M')).apply(lambda x: x.index.max())]
     monthly_prices_array = monthly_prices.to_numpy()
 
     return get_returns_lambda(monthly_prices_array)
@@ -38,7 +40,7 @@ if __name__ == '__main__':
     start_date = datetime.date(2000, 1, 1)
     end_date = datetime.date(2009, 12, 31)
 
-    t_bills_returns = get_t_bills_monthly_returns(start_date, end_date, get_approximated_returns)
+    t_bills_returns = get_t_bills_monthly_returns(start_date, end_date)
     returns_count = t_bills_returns.shape[0]
     geometric_return = 100 * (np.float_power(
         prod(map(lambda _return: 1 + _return / 100.0, t_bills_returns)), 1.0 / returns_count) - 1)
@@ -47,7 +49,7 @@ if __name__ == '__main__':
     start_date = datetime.date(2000, 1, 1)
     end_date = datetime.date(2019, 12, 31)
 
-    t_bills_returns = get_t_bills_monthly_returns(start_date, end_date, get_approximated_returns)
+    t_bills_returns = get_t_bills_monthly_returns(start_date, end_date)
     geometric_return = 100 * (np.float_power(
         prod(map(lambda _return: 1 + _return / 100.0, t_bills_returns)), 1.0 / returns_count) - 1)
     print(f'Geometric Mean Rate Of Return: {round(geometric_return, 2)}%')

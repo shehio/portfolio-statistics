@@ -1,3 +1,6 @@
+import datetime
+import numpy as np
+
 # The decade of the 2000s has been called the “lost decade” for the U.S. economy (Neil Irwin, “Aughts
 # were a lost decade for U.S. economy, workers,” The Washington Post, 2 January 2010). We will take a
 # look at the returns from investments in stocks and cash over this decade. You may use either R or a
@@ -14,3 +17,7 @@
 # fixed mix strategies have resulted in greater ending wealth than an investment in cash or stocks alone
 # over the decade? Write up your analysis in a document and submit.
 
+if __name__ == '__main__':
+    ratios = np.array([i * 10 for i in range(11)])
+    start_date = datetime.date(2000, 1, 1)
+    end_date = datetime.date(2009, 12, 31)
