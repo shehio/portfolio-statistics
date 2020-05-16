@@ -14,7 +14,7 @@ def get_approximated_returns(prices_array: np.array):
     normalized_prices = prices_array / 100
     return 100 / 3 * (normalized_prices * t_bills_ratio) / (1 - (normalized_prices * t_bills_ratio))
 
-
+# This could be more generic by passing in the symbol.
 def get_t_bills_monthly_returns(start_date: datetime.date, end_date: datetime.date, get_returns_lambda):
     prices_dataframe = yf.download(
         '^IRX',
