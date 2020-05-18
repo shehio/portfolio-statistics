@@ -51,4 +51,3 @@ if __name__ == '__main__':
     geometric_return = 100 * (np.float_power(
         prod(map(lambda _return: 1 + _return / 100.0, t_bills_returns)), 1.0 / returns_count) - 1)
     print(f'Geometric Mean Rate Of Return: {round(geometric_return, 2)}%')
-

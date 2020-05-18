@@ -34,10 +34,10 @@ def get_russel_monthly_returns(
 
 
 if __name__ == '__main__':
-    start_date = datetime.date(2000, 1, 1)
+    start_date = datetime.date(1999, 12, 31)
     end_date = datetime.date(2009, 12, 31)
     print(np.round(get_russel_monthly_returns(start_date, end_date), 2))
 
-    start_date = datetime.date(2010, 1, 1)
+    start_date = datetime.date(2009, 12, 31)
     end_date = datetime.date(2019, 12, 31)
     print(np.round(get_russel_monthly_returns(start_date, end_date), 2))
