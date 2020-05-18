@@ -81,3 +81,19 @@ if __name__ == '__main__':
         list(map(lambda portfolio_returns: get_approximated_geometric_return(portfolio_returns), portfolios_returns))
     print(f'Approximated Geometric Returns: {np.round(approximated_geometric_returns, 2)}')
 
+    import matplotlib.pyplot as plt
+
+    plt.plot(standard_deviations, arithmetic_returns)
+    plt.ylabel('Arithmetic Returns')
+    plt.xlabel('Standard Deviations')
+    plt.show()
+
+    plt.plot(standard_deviations, geometric_returns)
+    plt.ylabel('Geometric Returns')
+    plt.xlabel('Standard Deviations')
+    plt.show()
+
+    plt.plot(standard_deviations, approximated_geometric_returns)
+    plt.ylabel('Approximated Geometric Returns')
+    plt.xlabel('Standard Deviations')
+    plt.show()
