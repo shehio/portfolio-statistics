@@ -3,8 +3,8 @@ from functools import reduce
 import operator
 import numpy as np
 
-from assignments.assignment6.tbills import get_t_bills_monthly_returns
-from assignments.assignment6.russelreturns import get_russel_monthly_returns
+from assignments.assignment6_1.tbills import get_t_bills_monthly_returns
+from assignments.assignment6_1.russelreturns import get_russel_monthly_returns
 
 
 def prod(iterable):
