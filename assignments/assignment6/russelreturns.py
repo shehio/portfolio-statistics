@@ -8,6 +8,14 @@ from src.iohelpers import IoHelpers
 column_of_interest = 'Value_With_Dividends__USD_'
 russel_file = './../statements/valueshist_US3000_all.csv'
 
+# 4. The Russell 3000 index represents approximately 98% of the market capitalization of U.S. common stocks.
+# Historical values of the Russell 3000 index are available at:
+# https://www.ftserussell.com/products/russell-index-values.
+# A file valueshist_US3000_all.csv of daily values of the Russell 3000 index is posted with the assignment.
+# In the file readIndexHistory.R file is a function, readIndexHistory(histfile), that reads a Russell index history file
+# and returns an xts object with month-end index values. Run this script and its support functions following the example
+# in the file. Calculate monthly total returns for the Russell 3000 index. Use these returns for problem 4.
+
 
 def get_last_month_data_from_russel(filename: str) -> pd.DataFrame:
     _russel_values = IoHelpers.read_russel_returns(filename)
