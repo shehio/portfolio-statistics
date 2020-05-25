@@ -83,6 +83,20 @@ class IoHelpers:
         return holdings_dict
 
     @staticmethod
+    def get_stock_stats_from_russel():
+        csv = IoHelpers.read_csv('./../statements/H-R1000-chars-2019-05-31.csv')
+        next(csv)  # throwing the fields away.
+        stats = {}
+        for csv_line in csv:
+            ticker = csv_line[1]
+            book_to_price = 0 if csv_line[-4] == 'NA' else float(csv_line[-4])
+            IBES_2Yr_growth_rate = 0 if csv_line[-3] == 'NA' else float(csv_line[-3])
+            SPS_5Yr_growth_rate = 0 if csv_line[-1] == 'NA' else float(csv_line[-1])
+            stats[ticker] = (book_to_price, IBES_2Yr_growth_rate, SPS_5Yr_growth_rate)
+
+        return stats
+
+    @staticmethod
     def read_csv(file_name: str):  # This is not implemented properly.
         return csv.reader(open(file_name))
 
