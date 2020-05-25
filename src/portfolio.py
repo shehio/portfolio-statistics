@@ -65,8 +65,13 @@ class Portfolio:
         self.dividends += current_dividends
         self.cash.shares += current_dividends
 
-    def write_holding(self, date):
-        pass
+    def get_weights(self, date):
+        weights = {}
+        total_value = self.get_value(date)
+        for security in self.securities:
+            weights[security] = ApiHelpers.get_close_price(security.ticker, date) * security.shares / total_value
+
+        return weights
 
     def __repr__(self):
         return f'{self.cash}, div: {self.dividends}, {self.securities}'
