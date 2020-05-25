@@ -86,4 +86,4 @@ transaction_costs = np.array([week0_transaction_cost, week1_transaction_cost])
 
 collection = np.array([income_returns, price_returns, total_returns, new_portfolio,
                        portfolio_values, transaction_costs, weekly_fees, dividends_collection])
-Helpers.save_to_pickle(collection, 'a1.pkl')
+Helpers.save_to_pickle(collection, 'pkls/a1.pkl')

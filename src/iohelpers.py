@@ -18,7 +18,7 @@ class IoHelpers:
             content += f'{security.ticker},{security.shares}\n'
         content += f'{portfolio.cash.ticker},{portfolio.cash.shares}'
 
-        csv_file = open(f'./statements/H-{account_name}-{date}.csv', 'w')
+        csv_file = open(f'./statements/holdings/H-{account_name}-{date}.csv', 'w')
         csv_file.write(content)
         csv_file.close()
 
@@ -36,7 +36,7 @@ class IoHelpers:
             content += f'{account_name},{date},{deposit},{withdrawal},{dividend},' \
                        f'{fee},{transactional_cost},{value},{income_return},{price_return},{total_return}\n'
 
-        csv_file = open(f'./statements/A-{account_name}-{dates[len(dates) - 1]}.csv', 'w')
+        csv_file = open(f'./statements/accountsummeries/A-{account_name}-{dates[len(dates) - 1]}.csv', 'w')
         csv_file.write(content)
         csv_file.close()
 

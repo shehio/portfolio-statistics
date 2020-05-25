@@ -78,7 +78,7 @@ def Q2():
 
 
 def Q2_corrected():
-    _, _, _, _, portfolio_values, _, _, dividends_collection = Helpers.load_vars_from_pickle('./../a4.pkl')
+    _, _, _, _, portfolio_values, _, _, dividends_collection = Helpers.load_vars_from_pickle('../pkls/a4.pkl')
 
     week1_return = portfolio_values[1] / portfolio_values[0]
     week2_return = portfolio_values[2] / portfolio_values[1]

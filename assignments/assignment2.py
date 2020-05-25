@@ -7,7 +7,7 @@ import numpy as np
 import pickle
 
 income_returns, price_returns, total_returns, new_portfolio, portfolio_values, transaction_costs,\
-               weekly_fees, dividends_collection = Helpers.load_vars_from_pickle('a1.pkl')
+               weekly_fees, dividends_collection = Helpers.load_vars_from_pickle('pkls/a1.pkl')
 
 
 # ### Assignment 2:
@@ -85,11 +85,11 @@ Helpers.myprint([f'The pre-tax value of the portfolio: {assignment2_portfolio_va
 
 
 # Saving data
-output = open('a2.pkl', 'wb')
+output = open('pkls/a2.pkl', 'wb')
 
 week2_transaction_cost = 0
 transaction_costs = np.append(transaction_costs, week2_transaction_cost)
 
 collection = np.array([income_returns, price_returns, total_returns, new_portfolio,
                        portfolio_values, transaction_costs, weekly_fees, dividends_collection])
-Helpers.save_to_pickle(collection, 'a2.pkl')
+Helpers.save_to_pickle(collection, 'pkls/a2.pkl')

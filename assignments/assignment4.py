@@ -7,7 +7,7 @@ from assignments.assignment_helpers import Helpers
 import numpy as np
 
 income_returns, price_returns, total_returns, new_portfolio, portfolio_values, transaction_costs, \
-               weekly_fees, dividends_collection = Helpers.load_vars_from_pickle('a3.pkl')
+               weekly_fees, dividends_collection = Helpers.load_vars_from_pickle('pkls/a3.pkl')
 
 new_portfolio.reset_dividends()
 
@@ -84,4 +84,4 @@ IoHelpers.write_account_summary(
 
 collection = np.array([income_returns, price_returns, total_returns, new_portfolio,
                        portfolio_values, transaction_costs, weekly_fees, dividends_collection])
-Helpers.save_to_pickle(collection, 'a4.pkl')
+Helpers.save_to_pickle(collection, 'pkls/a4.pkl')
