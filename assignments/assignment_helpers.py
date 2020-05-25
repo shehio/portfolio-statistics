@@ -32,6 +32,7 @@ class Helpers:
     assignment5_end_date = datetime.date(2020, 5, 1)
     assignment6_1_end_date = datetime.date(2020, 5, 8)
     assignment6_2_end_date = datetime.date(2020, 5, 15)
+    assignment7_end_date = datetime.date(2020, 5, 22)
 
     trade_date = datetime.date(2020, 4, 3)
     assignment3_trade_date = datetime.date(2020, 4, 17)
