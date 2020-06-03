@@ -12,7 +12,7 @@ def prod(iterable):
 def get_approximated_returns(prices_array: np.array):
     t_bills_ratio = (91 / 360)
     normalized_prices = prices_array / 100
-    return 100 / 3 * (normalized_prices * t_bills_ratio) / (1 - (normalized_prices * t_bills_ratio))
+    return 1 / 3 * (normalized_prices * t_bills_ratio) / (1 - (normalized_prices * t_bills_ratio))
 
 
 # This could be more generic by passing in the symbol.
@@ -37,17 +37,17 @@ if __name__ == '__main__':
     # Observe the current level of T-bill returns compared with that of the last decade.
     # Our use of the approximation during this course, that cash returns are zero, appears to be reasonable.
 
+    # Check the diff, the mistake here was the compounding. The returns should have been compounded annually.
+
     start_date = datetime.date(2000, 1, 1)
     end_date = datetime.date(2009, 12, 31)
     t_bills_returns = get_t_bills_monthly_returns(start_date, end_date)
-    returns_count = t_bills_returns.shape[0]
-    geometric_return = 100 * (np.float_power(
-        prod(map(lambda _return: 1 + _return / 100.0, t_bills_returns)), 1.0 / returns_count) - 1)
-    print(f'Geometric Mean Rate Of Return: {round(geometric_return, 2)}%')
+    returns_count = len(t_bills_returns)
+    geometric_return = 100 * (np.float_power(prod(map(lambda _return: 1 + _return, t_bills_returns)), 1.0 / 10) - 1)
+    print(f'Geometric Mean Rate Of Return: {round(geometric_return, 5)}%')
 
-    start_date = datetime.date(2000, 1, 1)
+    start_date = datetime.date(2010, 1, 1)
     end_date = datetime.date(2019, 12, 31)
     t_bills_returns = get_t_bills_monthly_returns(start_date, end_date)
-    geometric_return = 100 * (np.float_power(
-        prod(map(lambda _return: 1 + _return / 100.0, t_bills_returns)), 1.0 / returns_count) - 1)
-    print(f'Geometric Mean Rate Of Return: {round(geometric_return, 2)}%')
+    geometric_return = 100 * (np.float_power(prod(map(lambda _return: 1 + _return, t_bills_returns)), 1.0 / 10) - 1)
+    print(f'Geometric Mean Rate Of Return: {round(geometric_return, 5)}%')
